@@ -141,7 +141,7 @@ Generator.prototype.init = function() {
 Generator.prototype.update = function() {
   $("menu ." + key + " var").html(Generators[key].num.toFixed(2)); // This 'key' is going to cause problems later...
   if (this.produce()) {
-    var amount = this.produce() * (tickLength / 1000);
+    var amount = this.produce() * (Pixpls.tickLength / 1000);
     var tar = this.produceTarget();
     if (tar.num + amount > 0) {
       tar.num += amount;

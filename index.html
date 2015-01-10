@@ -5,19 +5,21 @@
     <script src="jquery.js"></script>
     <script src="Pixpls.js"></script>
     <script src="generators.js"></script>
+    <script src="mods.js"></script>
     <script src="logs.js"></script>
   </head>
 
   <body>
     <header>
-      Pixpls!
+      <h1>Pixpls!</h1>
       <p id="ticknumber"></p>
       <!-- Game Info? Maybe the current phase of the game? -->
     </header>
 
-    <nav> <!-- Menu Elements across the top --> </nav>
+    <nav id="tabmenu"> <!-- Menu Elements across the top --> </nav>
 
-    <section>
+    <!-- I'm going to want to make this part a <main> with lots of <sections> that get shown and hidden -->
+    <section id="generators">
       <!-- A section for each menu area that gets swapped in and out. -->
       <menu>
         <!-- Each section will get its own menu -->
@@ -30,8 +32,7 @@
       <!-- I just can't figure out where we want to put the Mods -->
     </section>
 
-    <footer>
-      <!-- Logs -->
-    </footer>
+    <div class="mods"></div>
+    <footer class="logs"></footer>
   </body>
 </html>
