@@ -7,7 +7,6 @@ var Generators = {
   }),
   pixel: new Generator({
     name: "Pixel",
-    costRatio: 1.1,
     produceTarget: "click",
     costTarget: "click",
     produce: -1,
@@ -75,7 +74,10 @@ function Generator (params) {
 
   // Logic
   this.baseCost = params.baseCost || 1;
-  this.costRatio = params.costRatio;
+//  this.costRatio = params.costRatio;
+  Object.defineProperty(this, "costRatio", {
+    get: function() { return Math.pow(2, Math.floor(this.num))}
+  });
   this.costTarget = function () { return Generators[costTarget]; };
   this.produceTarget = function () { return Generators[produceTarget]; }; // I can make this a getter, but how in the class def?
   this.baseProduce = params.produce;
@@ -135,11 +137,13 @@ Generator.prototype.init = function() {
   article.append("<h2>" + name + "</h2>");
   article.append("<em>" + flavorText + "</em>");
   article.append ("<p class=\"numLost\"></p>"); // This needs to be added or removed dynamically... But can I do it without rebuilding the whole article?
+  article.append ("<p class=\"generatorCost\"></p>");
 
   this.article = article;
 };
 Generator.prototype.update = function() {
   $("menu ." + key + " var").html(Generators[key].num.toFixed(2)); // This 'key' is going to cause problems later...
+  this.article.find(".generatorCost").html("Costs <var>" + this.cost() + "</var> per " + this.name + ".");
   if (this.produce()) {
     var amount = this.produce() * (Pixpls.tickLength / 1000);
     var tar = this.produceTarget();

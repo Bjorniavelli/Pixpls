@@ -2,6 +2,7 @@ var Pixpls = {
   ver: "pre-alpha",
   tickLength: 100,
   numTicks: 0,
+  devMode: true,
 
   buildGeneratorMenu: function() {
     var menu = $("<menu />");

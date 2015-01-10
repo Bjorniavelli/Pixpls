@@ -3,12 +3,12 @@ function Mod (params) {
   this.label = params.label || "";
   this.description = params.description || "";
 
-  this.bought = params.bought || false;
+  var t = this;
   this.makeAvailable = params.makeAvailable || function() { return false; };
   this.affordable = params.affordable || function() { return true; };
-  this.buy = params.buy || function() { /* ??? */ };
+  this.buy = params.buy || function() { new Log({message: "Bought " + t.name + "."}); };
 };
-Mod.prototype.display = function() {
+Mod.prototype.display = function() { // This may need to go inside...
   var t = this;
   var index = unavailableMods.indexOf(t);
 
@@ -20,22 +20,43 @@ Mod.prototype.display = function() {
   unavailableMods.splice(index, 1);
   availableMods.push(this);
 
-  console.log(unavailableMods.toString());
-  console.log(availableMods.toString());
+  renderMods();
+};
+Mod.prototype.purchase = function() {
+  var t = this;
+
+  var index = availableMods.indexOf(t);
+
+  if (index < 0 || index > availableMods.length) {
+    console.log ("We have a problem.  " + t.name + " is trying to purchase, but is not in availableMods.");
+    return;
+  }
+
+  availableMods.splice(index, 1);
+  purchasedMods.push(this);
+
+  this.affordable = function() {return false;};
+  this.purchase = function() {};
 
   renderMods();
 };
-Mod.prototype.render = function() {
+Mod.prototype.render = function(available) {
   var div = $("<div />");
   div.addClass(this.label);
 
   div.append("<p>" + this.name + "</p>");
   div.append("<p>" + this.description + "</p>");
 
-  var button = $("<button>Buy!</button>");
-  button.click(function() {console.log("Bought!");});
-  div.append(button);
-
+  if (available) {
+    var t = this;
+    var button = $("<button>Buy!</button>");
+    if (t.buy) button.click(function() { t.buy(); });
+    if ( t.affordable() ) {
+      div.append(button);
+    } else {
+      div.append("<s>Buy</s>");
+    }
+  }
   return div;
 }
 
@@ -45,18 +66,24 @@ var renderMods = function() {
 
   var divAvailable = $("<div />");
   divAvailable.addClass("available");
-  var divBought = $("<div />");
-  divBought.addClass("bought");
+  divAvailable.append("<h4>Available</h4>");
+  var divPurchased = $("<div />");
+  divPurchased.addClass("bought");
+  divPurchased.append("<h4>Purchased</h4>");
 
   for (var i = 0; i < availableMods.length; i++) {
-    divAvailable.append(availableMods[i].render());
+    divAvailable.append(availableMods[i].render(true));
   }
-  for (var i = 0; i < boughtMods.length; i++) {
-    divBought.append(boughtMods[i].render());
+  for (var i = 0; i < purchasedMods.length; i++) {
+    divPurchased.append(purchasedMods[i].render(false));
   }
 
-  div.append(divAvailable);
-  div.append(divBought);
+  if (availableMods.length > 0) {
+    div.append(divAvailable);
+  }
+  if (purchasedMods.length > 0) {
+    div.append(divPurchased);
+  }
 
   $(".mods").replaceWith(div);
 };
@@ -64,24 +91,26 @@ var renderMods = function() {
 var unavailableMods = [
   new Mod({
     name: "Test Upgrade",
-    label: "Useless Upgrade",
+    label: "UselessUpgrade",
     description: "Just checking to see if the upgrade display is working.",
-    bought: false,
-    buy: function () { this.bought = true; new Log({message: "Bought a useless upgrade!  Go you!"}); },
+    buy: function () { this.purchase(); new Log({message: "Bought a useless upgrade!  Go you!"}); },
     makeAvailable: function() {return true;}
+  }),
+  new Mod({
+    name: "Check Clicks",
+    label: "Debug Inventory Kit",
+    description: "Add 10,000,000 clicks.",
+    makeAvailable: function() { return Pixpls.devMode; },
+    affordable: function() { return true; },
+    buy: function() { Generators["click"].num += 10000000; }
   })
 ];
 var availableMods = [];
-var boughtMods = [];
+var purchasedMods = [];
 var hiddenMods = [];
 
 /*var upgrades = [
   {
-    name: "Check Clicks",
-    label: "Debug Inventory Kit",
-    description: "Add 10,000,000 clicks.",
-    bought: false,
-    buy: function() { tabs[0].items[0].num += 10000000; }
   },
   {
     name: "Click Preparation",
