@@ -1,27 +1,24 @@
-var logDisplay = 5;
-var maxLogs = 100;
+var maxLogs = 1000;
 var maxDisplayLogs = 10;
+var nextLogId = 0;
+
+var logChange = true;
 
 function Log(params) {
   this.message = params.message;
-  this.timer = logDisplay;
   this.enabled = true;
-};
-Log.prototype.update = function() {
-  if (this.enabled == false) {
-    return;
-  }
-  this.timer -= Pixpls.tickLength / 1000;
-  if (this.timer < 0) {
-    this.enabled = false;
-  }
+  this.id = nextLogId;
+  nextLogId++;
+  this.timeStampe = Date.now();
+
+  Logs.unshift(this);
 };
 
-var Logs = [
-  new Log({
+var Logs = [];
+
+new Log({
     message: "Welcome to Pixpls! (ver." + Pixpls.ver + ")"
-  }),
-  new Log({
+  });
+new Log({
     message: "This *is* a clicky game.  How about some tasty, endorphin-producing clicking?"
-  })
-];
+  });

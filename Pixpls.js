@@ -28,8 +28,11 @@ var Pixpls = {
     var i = 0;
 
     for (index in Logs) {
-      Logs[index].update();
-      if (i < maxDisplayLogs && Logs[index].enabled) {
+      if (i >= maxDisplayLogs) {
+        break;
+      }
+
+      if (Logs[index].enabled) {
         footer.append("<p>" + Logs[index].message + "</p>");
         i++;
       }
