@@ -1,102 +1,48 @@
-var Generators = {
-  click: new Generator({
-    name: "Click",
-    enabled: true
-  }),
-  pixel: new Generator({
-    name: "Pixel",
-    costRatio: 1.1,
-    produceTarget: "click",
-    produce: -1
-  }),
-  renderer: new Generator({
-    name: "Renderer",
-    num: 0,
-    costRatio: 2,
-    produceTarget: "pixel",
-    produce: 1
-  }),
-  extruder: new Generator({
-    name: "Extruder",
-    costRatio: 2,
-    produceTarget: "renderer",
-    produce: 1
-  }),
-  electronicskit: new Generator({
-    name: "Electronics Kit",
-    costRatio: 2,
-    produceTarget: "extruder",
-    produce: 1
-  }),
-  factory: new Generator({
-    name: "Factory",
-    costRatio: 2,
-    produceTarget: "electronicskit",
-    produce: 1
-  }),
-  cementprinter: new Generator({
-    name: "Cement Printer",
-    costRatio: 2,
-    produceTarget: "factory",
-    produce: 1
-  }),
-  designlab: new Generator({
-    name: "Design Lab",
-    costRatio: 2,
-    produceTarget: "cementprinter",
-    produce: 1
-  }),
-  ai: new Generator({
-    name: "AI",
-    costRatio: 2,
-    produceTarget: "designlab",
-    produce: 1
-  })
-};
+var Pixpls = {
+  ver: "pre-alpha",
+  tickLength: 100,
 
-function Generator (params) {
-  var produceTarget = params.produceTarget;
+  buildGeneratorMenu: function() {
+    var menu = $("<menu />");
 
-  this.name = params.name;
-  this.costRatio = params.costRatio;
-  this.produceTarget = function () { Generators[produceTarget]; };
-  this.produce = params.produce;
-  this.enabled = params.enabled;
+    for (key in Generators) {
+      var generator = Generators[key];
+      generator.init();
+      menu.append(generator.li);
+    }
 
-  this.num = params.num || 0;
-};
+    $("menu").replaceWith(menu);
+  },
 
-var buildGeneratorMenu = function() {
-  var menu = $("<menu />");
+  updateGeneratorMenu: function() {
+    for (key in Generators) {
+      Generators[key].update();
+    }
+  },
+  updateLogs: function() {
+    if (Logs.length > maxLogs) {
+      Logs = Logs.slice(0, maxLogs);
+    }
 
-  for (key in Generators) {
-    var generator = Generators[key];
+    var footer = $("<footer />");
+    var i = 0;
 
-    var li = $("<li />");
-    li.addClass(key);
-    li.html("<a href=\"\">" + generator.name + "</a>: <var>" + generator.num + "</var>");
-    li.append("<button>" + "Buy!" + "</button>"); // this needs to change the Buy! -> Some Message
-    li.find("a").click(function(e) { e.preventDefault(); });
+    for (index in Logs) {
+      Logs[index].update();
+      if (i < maxDisplayLogs && Logs[index].enabled) {
+        footer.append("<p>" + Logs[index].message + "</p>");
+        i++;
+      }
+    }
 
-    var target = function(g) { return function() { g.num++; }};
-    li.find("button").click(target(generator));
-
-    menu.append(li);
-  }
-
-  $("menu").replaceWith(menu);
-};
-
-var updateGeneratorMenu = function() {
-  for (key in Generators) {
-    $("menu ." + key + " var").html(Generators[key].num);
+    $("footer").replaceWith(footer);
   }
 };
-
 $(document).ready(function() {
-  buildGeneratorMenu();
+  Pixpls.buildGeneratorMenu();
 
   window.setInterval(function() {
-    updateGeneratorMenu();
-  }, 1000);
+    Pixpls.updateGeneratorMenu();
+    Pixpls.updateLogs();
+  }, Pixpls.tickLength);
 });
