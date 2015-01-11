@@ -117,6 +117,24 @@ var unavailableMods = [
       new Log({message: "Ohhhh!  You were using an inverse phase relation on your mouse.  We'll filter out those Star Trekian waves.  That will make clicks more nutritious."});
       this.purchase();
     }
+  }),
+  new Mod({
+    name: "Click Preparation",
+    label: "Click Chef",
+    description: "Clicks are eating too much!  You're starving!  But maybe if you hired a chef, you'd be able to reduce your raw click consumption.",
+    makeAvailable: function() { return Generators["pixel"].numLost >= 4; },
+    affordable: function() { return Generators["click"].num >= 10 && Generators["pixel"].num >= 1; },
+    buy: function() {
+      Generators["click"].num -= 10;
+      this.description = "Happy Chef!  He chops and sizzles pixels into a tasty slurry.  But you understand little of what he says.";
+      new Log({message: "One pixel reassigned to cheffery."});
+      if (Generators["pixel"].produce < 0) {
+        Generators["pixel"].produce /= 10;
+      } else {
+        Generators["pixel"].produce *= 1.1;
+      }
+      this.purchase();
+    }
   })
 ];
 var availableMods = [];
@@ -125,17 +143,6 @@ var hiddenMods = [];
 
 /*var upgrades = [
   {
-  },
-  {
-    name: "Click Preparation",
-    label: "Click Chef",
-    description: "Clicks are eating too much!  You're starving!  But maybe if you hired a chef, you'd be able to reduce your raw click consumption.",
-    cost: { medium: tabs[0].items[1], num: 1 },
-    bought: false,
-    buy: function() {
-      this.bought = true;
-      if (tabs[0].items[1].produce < 0) tabs[0].items[1].produce /= 10;
-    }
   },
   {
     name: "Click Preparation II",
