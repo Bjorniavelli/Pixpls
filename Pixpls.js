@@ -27,6 +27,15 @@ var Pixpls = {
         unavailableMods[i].display();
       }
     }
+
+    for (var i = 0; i < availableMods.length; i++) {
+      if (!availableMods[i].div.find("button") && availableMods[i].affordable()) {
+        availableMods[i].render();
+      }
+      else if (availableMods[i].div.find("button") && !availableMods[i].affordable()) {
+        availableMods[i].render();
+      }
+    }
   },
   updateLogs: function() {
     if (Logs.length > maxLogs) {

@@ -3,7 +3,8 @@ var Generators = {
     name: "Click",
     message: "Click!",
     enabled: true,
-    flavorText: "Strangely, they give off an appetizing aroma: Ozone and Umamclicki."
+    flavorText: "Strangely, they give off an appetizing aroma: Ozone and Umamclicki.",
+    costRatio: 0
   }),
   pixel: new Generator({
     name: "Pixel",
@@ -15,49 +16,42 @@ var Generators = {
   renderer: new Generator({
     name: "Renderer",
     num: 0,
-    costRatio: 2,
     produceTarget: "pixel",
     costTarget: "pixel",
     produce: 1
   }),
   extruder: new Generator({
     name: "Extruder",
-    costRatio: 2,
     produceTarget: "renderer",
     costTarget: "renderer",
     produce: 1
   }),
   electronicskit: new Generator({
     name: "Electronics Kit",
-    costRatio: 2,
     produceTarget: "extruder",
     costTarget: "extruder",
     produce: 1
   }),
   factory: new Generator({
     name: "Factory",
-    costRatio: 2,
     produceTarget: "electronicskit",
     costTarget: "electronicskit",
     produce: 1
   }),
   cementprinter: new Generator({
     name: "Cement Printer",
-    costRatio: 2,
     produceTarget: "factory",
     costTarget: "factory",
     produce: 1
   }),
   designlab: new Generator({
     name: "Design Lab",
-    costRatio: 2,
     produceTarget: "cementprinter",
     costTarget: "cementprinter",
     produce: 1
   }),
   ai: new Generator({
     name: "AI",
-    costRatio: 2,
     produceTarget: "designlab",
     costTarget: "designlab",
     produce: 1
@@ -67,6 +61,7 @@ var Generators = {
 function Generator (params) {
   var produceTarget = params.produceTarget;
   var costTarget = params.costTarget;
+  var costRatio = params.costRatio;
 
   // Descriptions
   this.name = params.name;
@@ -74,11 +69,24 @@ function Generator (params) {
 
   // Logic
   this.baseCost = params.baseCost || 1;
-//  this.costRatio = params.costRatio;
-  Object.defineProperty(this, "costRatio", {
-    get: function() { return Math.pow(2, Math.floor(this.num))}
+  if (typeof costRatio == "number") {
+    Object.defineProperty(this, "costRatio", {
+      get: function() { return params.costRatio }
+    });
+  }
+  else if (typeof costRatio == "function") {
+    Object.defineProperty(this, "costRatio", {
+      get: costRatio
+    })
+  }
+  else {
+    Object.defineProperty(this, "costRatio", {
+      get: function() { return Math.pow(2, Math.floor(this.num))}
+    });
+  }
+  Object.defineProperty(this, "costTarget", {
+    get: function () { return Generators[costTarget]; }
   });
-  this.costTarget = function () { return Generators[costTarget]; };
   this.produceTarget = function () { return Generators[produceTarget]; }; // I can make this a getter, but how in the class def?
   this.baseProduce = params.produce;
   this.produce = function() {return Math.floor(this.num) * this.baseProduce; };
@@ -102,13 +110,13 @@ function Generator (params) {
   },
 
   this.buy = function() {
-    if (!t.costTarget()) {
+    if (!t.costTarget) {
       t.num += t.buyAmount;
       return;
     }
 
-    if (t.costTarget().num >= t.cost()) {
-      t.costTarget().num -= t.cost();
+    if (t.costTarget.num >= t.cost()) {
+      t.costTarget.num -= t.cost();
       t.num += t.buyAmount;
       return;
     }
@@ -143,7 +151,10 @@ Generator.prototype.init = function() {
 };
 Generator.prototype.update = function() {
   $("menu ." + key + " var").html(Generators[key].num.toFixed(2)); // This 'key' is going to cause problems later...
-  this.article.find(".generatorCost").html("Costs <var>" + this.cost() + "</var> per " + this.name + ".");
+  if (this.costTarget) {
+    this.article.find(".generatorCost").html("Costs <var>" + this.cost() + "</var> " + this.costTarget.name + " per " + this.name + ".");
+  }
+  
   if (this.produce()) {
     var amount = this.produce() * (Pixpls.tickLength / 1000);
     var tar = this.produceTarget();

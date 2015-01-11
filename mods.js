@@ -50,13 +50,14 @@ Mod.prototype.render = function(available) {
   if (available) {
     var t = this;
     var button = $("<button>Buy!</button>");
-    if (t.buy) button.click(function() { t.buy(); });
+    if (t.buy) button.click(function() { console.log("Bought!"); t.buy(); });
     if ( t.affordable() ) {
       div.append(button);
     } else {
       div.append("<s>Buy</s>");
     }
   }
+  this.div = div;
   return div;
 }
 
@@ -98,11 +99,24 @@ var unavailableMods = [
   }),
   new Mod({
     name: "Check Clicks",
-    label: "Debug Inventory Kit",
+    label: "DebugClicks",
     description: "Add 10,000,000 clicks.",
     makeAvailable: function() { return Pixpls.devMode; },
     affordable: function() { return true; },
     buy: function() { Generators["click"].num += 10000000; }
+  }),
+  new Mod({
+    name: "Reduce Gluttony",
+    label: "RedGluttony",
+    description: "Those pixels seem to be eating an inordinate amount.  Maybe you're clicking wrong?  This will train you.",
+    makeAvailable: function() { return Generators["pixel"].num >= 3; },
+    affordable: function() { return Generators["click"].num >= 10; },
+    buy: function() {
+      Generators["click"].num -= 10;
+      this.description = "The pixels are still eating the same amount.  You're just producing more efficiently.";
+      new Log({message: "Ohhhh!  You were using an inverse phase relation on your mouse.  We'll filter out those Star Trekian waves.  That will make clicks more nutritious."});
+      this.purchase();
+    }
   })
 ];
 var availableMods = [];
