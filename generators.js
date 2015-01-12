@@ -131,8 +131,8 @@ function Generator (params) {
 Generator.prototype.init = function() {
   var li = $("<li />");
   li.addClass(key);
-  li.html("<a href=\"\">" + this.name + "</a>: <var>" + this.num + "</var>");
-  li.append("<button>" + this.message + "</button>"); // this needs to change the Buy! -> Some Message
+  li.html("<a href=\"\">" + this.name + "</a>: <var>" + toFixed(this.num, 2) + "</var>");
+  li.append("<button>" + this.message + "</button>");
   li.find("a").click(this.select);
   li.find("button").click(this.buy);
 
@@ -150,11 +150,11 @@ Generator.prototype.init = function() {
   this.article = article;
 };
 Generator.prototype.update = function() {
-  $("menu ." + key + " var").html(Generators[key].num.toFixed(2)); // This 'key' is going to cause problems later...
+  $("menu ." + key + " var").html(toFixed(Generators[key].num, 2)); // This 'key' is going to cause problems later...
   if (this.costTarget) {
     this.article.find(".generatorCost").html("Costs <var>" + this.cost() + "</var> " + this.costTarget.name + " per " + this.name + ".");
   }
-  
+
   if (this.produce()) {
     var amount = this.produce() * (Pixpls.tickLength / 1000);
     var tar = this.produceTarget();

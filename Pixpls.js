@@ -1,3 +1,7 @@
+function toFixed(num, precision) { // Grabbed off of StackOverflow -> floor instead of round
+  return (+(Math.floor(+(num + 'e' + precision)) + 'e' + -precision)).toFixed(precision);
+}
+
 var Pixpls = {
   ver: "pre-alpha",
   tickLength: 100,
@@ -49,7 +53,7 @@ $(document).ready(function() {
 
   window.setInterval(function() {
     Pixpls.numTicks++;
-    $("#ticknumber").html(Pixpls.numTicks.toFixed(0));
+    $("#ticknumber").html(toFixed(Pixpls.numTicks, 0));
 
     Pixpls.updateGeneratorMenu();
     Mods.update();
