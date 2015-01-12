@@ -21,22 +21,6 @@ var Pixpls = {
       Generators[key].update();
     }
   },
-  updateMods: function() {
-    for (var i = 0; i < unavailableMods.length; i++) {
-      if (unavailableMods[i].makeAvailable()) {
-        unavailableMods[i].display();
-      }
-    }
-
-    for (var i = 0; i < availableMods.length; i++) {
-      if (!availableMods[i].div.find("button") && availableMods[i].affordable()) {
-        availableMods[i].render();
-      }
-      else if (availableMods[i].div.find("button") && !availableMods[i].affordable()) {
-        availableMods[i].render();
-      }
-    }
-  },
   updateLogs: function() {
     if (Logs.length > maxLogs) {
       Logs = Logs.slice(0, maxLogs);
@@ -61,15 +45,14 @@ var Pixpls = {
 };
 $(document).ready(function() {
   Pixpls.buildGeneratorMenu();
-
-  renderMods();
+  Mods.render();
 
   window.setInterval(function() {
     Pixpls.numTicks++;
     $("#ticknumber").html(Pixpls.numTicks.toFixed(0));
 
     Pixpls.updateGeneratorMenu();
-    Pixpls.updateMods();
+    Mods.update();
     Pixpls.updateLogs();
   }, Pixpls.tickLength);
 });

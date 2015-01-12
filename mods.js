@@ -7,139 +7,184 @@ function Mod (params) {
   this.makeAvailable = params.makeAvailable || function() { return false; };
   this.affordable = params.affordable || function() { return true; };
   this.buy = params.buy || function() { new Log({message: "Bought " + t.name + "."}); };
-};
-Mod.prototype.display = function() { // This may need to go inside...
-  var t = this;
-  var index = unavailableMods.indexOf(t);
 
-  if (index < 0 || index > unavailableMods.length) {
-    console.log ("We have a problem.  " + t.name + " is trying to display, but is not in unavailableMods.");
-    return;
+  this.div = $("<div />");
+  this.div.addClass(this.label);
+  this.buttonSpan = $("<span />");
+  this.buttonSpan.addClass("buttonSpan");
+  this.button = $("<button>Buy!</button>");
+  if (this.buy) {
+    this.button.click( this.buy );
   }
-
-  unavailableMods.splice(index, 1);
-  availableMods.push(this);
-
-  renderMods();
+  this.notButton = $("<s>Buy</s>");
+  this.buttonSpan.append(this.notButton);
 };
-Mod.prototype.purchase = function() {
-  var t = this;
-
-  var index = availableMods.indexOf(t);
-
-  if (index < 0 || index > availableMods.length) {
-    console.log ("We have a problem.  " + t.name + " is trying to purchase, but is not in availableMods.");
-    return;
+Mod.prototype.update = function() {
+  if ( this.affordable() && this.buttonSpan.children(":first").is("s")) {
+    this.buttonSpan.html(this.button);
   }
-
-  availableMods.splice(index, 1);
-  purchasedMods.push(this);
-
-  this.affordable = function() {return false;};
-  this.purchase = function() {};
-
-  renderMods();
+  if ( !this.affordable() && this.buttonSpan.children(":first").is("button")) {
+    this.buttonSpan.html(this.notButton);
+  }
 };
 Mod.prototype.render = function(available) {
-  var div = $("<div />");
-  div.addClass(this.label);
+  this.div.html("<p>" + this.name + "</p>");
+  this.div.append("<p>" + this.description + "</p>");
+  this.div.append(this.buttonSpan);
 
-  div.append("<p>" + this.name + "</p>");
-  div.append("<p>" + this.description + "</p>");
-
-  if (available) {
-    var t = this;
-    var button = $("<button>Buy!</button>");
-    if (t.buy) button.click(function() { console.log("Bought!"); t.buy(); });
-    if ( t.affordable() ) {
-      div.append(button);
-    } else {
-      div.append("<s>Buy</s>");
-    }
-  }
-  this.div = div;
-  return div;
-}
-
-var renderMods = function() {
-  var div = $("<div />");
-  div.addClass("mods");
-
-  var divAvailable = $("<div />");
-  divAvailable.addClass("available");
-  divAvailable.append("<h4>Available</h4>");
-  var divPurchased = $("<div />");
-  divPurchased.addClass("bought");
-  divPurchased.append("<h4>Purchased</h4>");
-
-  for (var i = 0; i < availableMods.length; i++) {
-    divAvailable.append(availableMods[i].render(true));
-  }
-  for (var i = 0; i < purchasedMods.length; i++) {
-    divPurchased.append(purchasedMods[i].render(false));
-  }
-
-  if (availableMods.length > 0) {
-    div.append(divAvailable);
-  }
-  if (purchasedMods.length > 0) {
-    div.append(divPurchased);
-  }
-
-  $(".mods").replaceWith(div);
+  this.update();
 };
 
-var unavailableMods = [
-  new Mod({
-    name: "Test Upgrade",
-    label: "UselessUpgrade",
-    description: "Just checking to see if the upgrade display is working.",
-    buy: function () { this.purchase(); new Log({message: "Bought a useless upgrade!  Go you!"}); },
-    makeAvailable: function() {return true;}
-  }),
-  new Mod({
-    name: "Check Clicks",
-    label: "DebugClicks",
-    description: "Add 10,000,000 clicks.",
-    makeAvailable: function() { return Pixpls.devMode; },
-    affordable: function() { return true; },
-    buy: function() { Generators["click"].num += 10000000; }
-  }),
-  new Mod({
-    name: "Reduce Gluttony",
-    label: "RedGluttony",
-    description: "Those pixels seem to be eating an inordinate amount.  Maybe you're clicking wrong?  This will train you.",
-    makeAvailable: function() { return Generators["pixel"].num >= 3; },
-    affordable: function() { return Generators["click"].num >= 10; },
-    buy: function() {
-      Generators["click"].num -= 10;
-      this.description = "The pixels are still eating the same amount.  You're just producing more efficiently.";
-      new Log({message: "Ohhhh!  You were using an inverse phase relation on your mouse.  We'll filter out those Star Trekian waves.  That will make clicks more nutritious."});
-      this.purchase();
-    }
-  }),
-  new Mod({
-    name: "Click Preparation",
-    label: "Click Chef",
-    description: "Clicks are eating too much!  You're starving!  But maybe if you hired a chef, you'd be able to reduce your raw click consumption.",
-    makeAvailable: function() { return Generators["pixel"].numLost >= 4; },
-    affordable: function() { return Generators["click"].num >= 10 && Generators["pixel"].num >= 1; },
-    buy: function() {
-      Generators["click"].num -= 10;
-      this.description = "Happy Chef!  He chops and sizzles pixels into a tasty slurry.  But you understand little of what he says.";
-      new Log({message: "One pixel reassigned to cheffery."});
-      if (Generators["pixel"].produce < 0) {
-        Generators["pixel"].produce /= 10;
-      } else {
-        Generators["pixel"].produce *= 1.1;
+var Mods = {
+  update: function() {
+    for (var i = 0; i < this.unavailableMods.length; i++) {
+      if (this.unavailableMods[i].makeAvailable()) {
+        this.displayMod(this.unavailableMods[i]);
       }
-      this.purchase();
     }
-  })
-];
-var availableMods = [];
-var purchasedMods = [];
-var hiddenMods = [];
+
+    for (var i = 0; i < this.availableMods.length; i++) {
+      this.availableMods[i].update();
+    }
+
+    if (this.availableMods.length == 0) {
+      this.divAvailable.hide();
+    } else {
+      this.divAvailable.show();
+    }
+
+    if (this.purchasedMods.length == 0) {
+      this.divPurchased.hide();
+    } else {
+      this.divPurchased.show();
+    }
+  },
+  render: function() {
+    this.div = $("<div />"); // Should I just define this as div: $("<div class="mods" />"); ?
+    this.div.addClass("mods");
+
+    this.divAvailable = $("<div />");
+    this.divAvailable.addClass("available");
+    this.divAvailable.append("<h4>Available</h4>");
+
+    this.divPurchased = $("<div />");
+    this.divPurchased.addClass("purchased");
+    this.divPurchased.append("<h4>Purchased</h4>");
+
+    this.div.append(this.divAvailable);
+    this.div.append(this.divPurchased);
+
+    // this.renderAvailable();
+    // this.renderPurchased();
+
+    $(".mods").replaceWith(this.div);
+  },
+
+  displayMod: function(mod) {
+    var index = this.unavailableMods.indexOf(mod);
+
+    if (index < 0 || index > this.unavailableMods.length) {
+      console.log ("We have a problem.  " + mod.name + " is trying to display, but is not in unavailableMods.");
+      return;
+    }
+
+    this.unavailableMods.splice(index, 1);
+    this.availableMods.push(mod);
+    // The problem is that the 10,000,000 clicks one is adding to the availableMods...
+    // But the test Mod isn't!  Why?  Does it have to do with the difference between the Mods.purchase?
+    // Ok, so if we add the purchase to the 10,000,000 clicks, it's Mods.purchase call doesn't work...
+    // Aha!  It's because of the 'this' calls in the buy.  We're going to have to figure out how to get around that... >_>
+    console.log(this.availableMods.indexOf(mod));
+
+    mod.render();
+    this.divAvailable.append(mod.div);
+
+    mod.makeAvailable = function() {return false;};
+  },
+  purchaseMod: function(mod) {
+    var index = this.availableMods.indexOf(mod);
+
+    console.log(mod.name);
+
+    console.log(this.unavailableMods.indexOf(mod));
+    console.log(this.availableMods.indexOf(mod));
+    console.log(this.purchasedMods.indexOf(mod));
+
+    if (index < 0 || index > this.availableMods.length) {
+      console.log ("We have a problem.  " + mod.name + " is trying to purchase, but is not in availableMods.");
+      return;
+    }
+
+    this.availableMods.splice(index, 1);
+    this.purchasedMods.push(mod);
+
+    this.divAvailable.detach(mod.div);
+    mod.render();
+    mod.divPurchased.append(mod.div);
+
+    mod.affordable = function() {return false;};
+    mod.purchase = function() {};
+  },
+
+  unavailableMods: [
+    new Mod({
+      name: "Test Upgrade",
+      label: "UselessUpgrade",
+      description: "Just checking to see if the upgrade display is working.",
+      makeAvailable: function() {return Pixpls.devMode; },
+      affordable: function() { return true; },
+      buy: function () {
+        console.log(this);
+        Mods.purchaseMod(this);
+        new Log({message: "Bought a useless upgrade!  Go you!"});
+      }
+    }),
+    new Mod({
+      name: "Check Clicks",
+      label: "DebugClicks",
+      description: "Add 10,000,000 clicks.",
+      makeAvailable: function() { return Pixpls.devMode; },
+      affordable: function() { return true; },
+      buy: function() {
+        Generators["click"].num += 10000000;
+      }
+    }),
+    new Mod({
+      name: "Reduce Gluttony",
+      label: "RedGluttony",
+      description: "Those pixels seem to be eating an inordinate amount.  Maybe you're clicking wrong?  This will train you.",
+      makeAvailable: function() { return Generators["pixel"].num >= 3; },
+      affordable: function() { return Generators["click"].num >= 10; },
+      buy: function() {
+        Generators["click"].num -= 10;
+        this.description = "The pixels are still eating the same amount.  You're just producing more efficiently.";
+        new Log({message: "Ohhhh!  You were using an inverse phase relation on your mouse.  We'll filter out those Star Trekian waves.  That will make clicks more nutritious."});
+        Mods.purchaseMod(this);
+      }
+    }),
+    new Mod({
+      name: "Click Preparation",
+      label: "ClickChef",
+      description: "Clicks are eating too much!  You're starving!  But maybe if you hired a chef, you'd be able to reduce your raw click consumption.",
+      makeAvailable: function() { return Generators["pixel"].numLost >= 4; },
+      affordable: function() { return Generators["click"].num >= 10 && Generators["pixel"].num >= 1; },
+      buy: function() {
+        Generators["click"].num -= 10;
+        this.description = "Happy Chef!  He chops and sizzles pixels into a tasty slurry.  But you understand little of what he says.";
+        new Log({message: "One pixel reassigned to cheffery."});
+        if (Generators["pixel"].produce < 0) {
+          Generators["pixel"].produce /= 10;
+        } else {
+          Generators["pixel"].produce *= 1.1;
+        }
+        Mods.purchaseMod(this);
+      }
+    })
+  ],
+  availableMods: [],
+  purchasedMods: [],
+  hiddenMods: []
+}
 
 /*var upgrades = [
   {
