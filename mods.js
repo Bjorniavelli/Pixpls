@@ -14,7 +14,8 @@ function Mod (params) {
   this.buttonSpan.addClass("buttonSpan");
   this.button = $("<button>Buy!</button>");
   if (this.buy) {
-    this.button.click( this.buy );
+    var t = this;
+    this.button.click( function() { t.buy(); } );
   }
   this.notButton = $("<s>Buy</s>");
   this.buttonSpan.append(this.notButton);
@@ -27,7 +28,7 @@ Mod.prototype.update = function() {
     this.buttonSpan.html(this.notButton);
   }
 };
-Mod.prototype.render = function(available) {
+Mod.prototype.render = function() {
   this.div.html("<p>" + this.name + "</p>");
   this.div.append("<p>" + this.description + "</p>");
   this.div.append(this.buttonSpan);
@@ -74,14 +75,16 @@ var Mods = {
     this.div.append(this.divAvailable);
     this.div.append(this.divPurchased);
 
-    // this.renderAvailable();
-    // this.renderPurchased();
-
     $(".mods").replaceWith(this.div);
   },
 
   displayMod: function(mod) {
-    var index = this.unavailableMods.indexOf(mod);
+    var index;
+    for (index = 0; index < this.unavailableMods.length; index++) {
+      if (mod.label == this.unavailableMods[index].label) {
+        break;
+      }
+    }
 
     if (index < 0 || index > this.unavailableMods.length) {
       console.log ("We have a problem.  " + mod.name + " is trying to display, but is not in unavailableMods.");
@@ -90,11 +93,6 @@ var Mods = {
 
     this.unavailableMods.splice(index, 1);
     this.availableMods.push(mod);
-    // The problem is that the 10,000,000 clicks one is adding to the availableMods...
-    // But the test Mod isn't!  Why?  Does it have to do with the difference between the Mods.purchase?
-    // Ok, so if we add the purchase to the 10,000,000 clicks, it's Mods.purchase call doesn't work...
-    // Aha!  It's because of the 'this' calls in the buy.  We're going to have to figure out how to get around that... >_>
-    console.log(this.availableMods.indexOf(mod));
 
     mod.render();
     this.divAvailable.append(mod.div);
@@ -102,15 +100,14 @@ var Mods = {
     mod.makeAvailable = function() {return false;};
   },
   purchaseMod: function(mod) {
-    var index = this.availableMods.indexOf(mod);
+    var index;
+    for (index = 0; index < this.availableMods.length; index++) {
+      if (mod.label == this.availableMods[index].label) {
+        break;
+      }
+    }
 
-    console.log(mod.name);
-
-    console.log(this.unavailableMods.indexOf(mod));
-    console.log(this.availableMods.indexOf(mod));
-    console.log(this.purchasedMods.indexOf(mod));
-
-    if (index < 0 || index > this.availableMods.length) {
+    if (index < 0 || index >= this.availableMods.length) {
       console.log ("We have a problem.  " + mod.name + " is trying to purchase, but is not in availableMods.");
       return;
     }
@@ -118,9 +115,9 @@ var Mods = {
     this.availableMods.splice(index, 1);
     this.purchasedMods.push(mod);
 
-    this.divAvailable.detach(mod.div);
-    mod.render();
-    mod.divPurchased.append(mod.div);
+    mod.div.detach();
+    mod.buttonSpan.hide();
+    this.divPurchased.append(mod.div);
 
     mod.affordable = function() {return false;};
     mod.purchase = function() {};
@@ -134,7 +131,6 @@ var Mods = {
       makeAvailable: function() {return Pixpls.devMode; },
       affordable: function() { return true; },
       buy: function () {
-        console.log(this);
         Mods.purchaseMod(this);
         new Log({message: "Bought a useless upgrade!  Go you!"});
       }
@@ -167,15 +163,16 @@ var Mods = {
       label: "ClickChef",
       description: "Clicks are eating too much!  You're starving!  But maybe if you hired a chef, you'd be able to reduce your raw click consumption.",
       makeAvailable: function() { return Generators["pixel"].numLost >= 4; },
-      affordable: function() { return Generators["click"].num >= 10 && Generators["pixel"].num >= 1; },
-      buy: function() {
+      affordable: function() {
+        return Generators["click"].num >= 10 && Generators["pixel"].num >= 1; },
+      buy: function() { // t is almost always a shorthand for 'this'.
         Generators["click"].num -= 10;
         this.description = "Happy Chef!  He chops and sizzles pixels into a tasty slurry.  But you understand little of what he says.";
         new Log({message: "One pixel reassigned to cheffery."});
-        if (Generators["pixel"].produce < 0) {
-          Generators["pixel"].produce /= 10;
+        if (Generators["pixel"].baseProduce < 0) {
+          Generators["pixel"].baseProduce /= 10;
         } else {
-          Generators["pixel"].produce *= 1.1;
+          Generators["pixel"].baseProduce *= 1.1;
         }
         Mods.purchaseMod(this);
       }
