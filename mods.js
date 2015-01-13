@@ -10,32 +10,37 @@ function Mod (params) {
 
   this.div = $("<div />");
   this.div.addClass(this.label);
-  this.buttonSpan = $("<span />");
-  this.buttonSpan.addClass("buttonSpan");
-  this.button = $("<button>Buy!</button>");
-  if (this.buy) {
-    var t = this;
-    this.button.click( function() { t.buy(); t.render(); } );
-  }
-  this.notButton = $("<s>Buy</s>");
-  this.buttonSpan.append(this.button);
-  this.button.hide();
-  this.buttonSpan.append(this.notButton);
+
+  this.render();
 };
 Mod.prototype.update = function() {
   if ( this.affordable()) {
-    this.button.show();
     this.notButton.hide();
+    this.button.show();
   }
   if ( !this.affordable()) {
-    this.button.hide();
     this.notButton.show();
+    this.button.hide();
   }
 };
 Mod.prototype.render = function() {
   this.div.html("<p>" + this.name + "</p>");
   this.div.append("<p>" + this.description + "</p>");
   this.div.append(this.buttonSpan);
+
+  this.buttonSpan = $("<span />");
+  this.buttonSpan.addClass("buttonSpan");
+  this.button = $("<button />");
+  this.button.addClass("Random");
+  this.button.html("Buy!");
+
+  if (this.buy) {
+    var t = this;
+    this.button.click( function() { t.buy(); t.render(); } );
+  }
+
+  this.buttonSpan.append(this.button);
+  this.buttonSpan.append(this.notButton);
 
   this.update();
 };
@@ -100,8 +105,6 @@ var Mods = {
 
     mod.render();
     this.divAvailable.append(mod.div);
-
-    mod.makeAvailable = function() {return false;};
   },
   purchaseMod: function(mod) {
     var index;
@@ -122,9 +125,6 @@ var Mods = {
     mod.div.detach();
     mod.buttonSpan.hide();
     this.divPurchased.append(mod.div);
-
-    mod.affordable = function() {return false;};
-    mod.purchase = function() {};
   },
 
   purchased: function(modLabel) {
@@ -193,8 +193,9 @@ var Mods = {
       makeAvailable: function() { return Mods.purchased("RedGluttony"); },
       affordable: function() { return Generators["pixel"].num > (Math.pow(Generators["click"].costPower, 4 / Generators["click"].costPower) * 10); },
       buy: function() {
+        console.log("Again?");
         Generators["pixel"].num /= 2;
-        Generators["click"].costRatio /= 2;
+        Generators["click"].costPower /= 2;
         this.description = "Better.  Turns out Pixel Darwinism is working.  Try again!";
         new Log({message: "*Jargon* *Jargon* Fun fact: In Star Trek scripts, they just wrote 'Jargon' and they got really good at making stuff up.  Pixel cost reduced to power " + Generators["click"].costPower + "." });
       }
