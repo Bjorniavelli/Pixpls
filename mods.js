@@ -15,17 +15,21 @@ function Mod (params) {
   this.button = $("<button>Buy!</button>");
   if (this.buy) {
     var t = this;
-    this.button.click( function() { t.buy(); } );
+    this.button.click( function() { t.buy(); t.render(); } );
   }
   this.notButton = $("<s>Buy</s>");
+  this.buttonSpan.append(this.button);
+  this.button.hide();
   this.buttonSpan.append(this.notButton);
 };
 Mod.prototype.update = function() {
-  if ( this.affordable() && this.buttonSpan.children(":first").is("s")) {
-    this.buttonSpan.html(this.button);
+  if ( this.affordable()) {
+    this.button.show();
+    this.notButton.hide();
   }
-  if ( !this.affordable() && this.buttonSpan.children(":first").is("button")) {
-    this.buttonSpan.html(this.notButton);
+  if ( !this.affordable()) {
+    this.button.hide();
+    this.notButton.show();
   }
 };
 Mod.prototype.render = function() {
@@ -123,6 +127,16 @@ var Mods = {
     mod.purchase = function() {};
   },
 
+  purchased: function(modLabel) {
+    for (var i = 0; i < this.purchasedMods.length; i++) {
+      if (this.purchasedMods[i].label == modLabel) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+
   unavailableMods: [
     new Mod({
       name: "Test Upgrade",
@@ -146,6 +160,16 @@ var Mods = {
       }
     }),
     new Mod({
+      name: "Check Pixels",
+      label: "DebugPixels",
+      description: "Add 1,000 pixels.",
+      makeAvailable: function() { return Pixpls.devMode; },
+      affordable: function() { return true; },
+      buy: function() {
+        Generators["pixel"].num += 1000;
+      }
+    }),
+    new Mod({
       name: "Reduce Gluttony",
       label: "RedGluttony",
       description: "Those pixels seem to be eating an inordinate amount.  Maybe you're clicking wrong?  This will train you.",
@@ -153,9 +177,26 @@ var Mods = {
       affordable: function() { return Generators["click"].num >= 10; },
       buy: function() {
         Generators["click"].num -= 10;
+        Generators["click"].costPower = 16;
+        Object.defineProperty(this, "costRatio", {
+          get: function() { return function() {return Math.pow( Generators["click"].num, Generators["click"].costPower );} }
+        });
         this.description = "The pixels are still eating the same amount.  You're just producing more efficiently.";
-        new Log({message: "Ohhhh!  You were using an inverse phase relation on your mouse.  We'll filter out those Star Trekian waves.  That will make clicks more nutritious."});
+        new Log({message: "Ohhhh!  You were using an inverse phase relation on your mouse.  We'll filter out those Star Trekian woes.  That will make clicks more nutritious."});
         Mods.purchaseMod(this);
+      }
+    }),
+    new Mod({
+      name: "Further Reduce Gluttony",
+      label: "RedGluttony2",
+      description: "Well, that didn't work... Turns out some of your pixels just got hungrier.  Maybe we should cull the hungry ones?",
+      makeAvailable: function() { return Mods.purchased("RedGluttony"); },
+      affordable: function() { return Generators["pixel"].num > (Math.pow(Generators["click"].costPower, 4 / Generators["click"].costPower) * 10); },
+      buy: function() {
+        Generators["pixel"].num /= 2;
+        Generators["click"].costRatio /= 2;
+        this.description = "Better.  Turns out Pixel Darwinism is working.  Try again!";
+        new Log({message: "*Jargon* *Jargon* Fun fact: In Star Trek scripts, they just wrote 'Jargon' and they got really good at making stuff up.  Pixel cost reduced to power " + Generators["click"].costPower + "." });
       }
     }),
     new Mod({
@@ -163,12 +204,31 @@ var Mods = {
       label: "ClickChef",
       description: "Clicks are eating too much!  You're starving!  But maybe if you hired a chef, you'd be able to reduce your raw click consumption.",
       makeAvailable: function() { return Generators["pixel"].numLost >= 4; },
-      affordable: function() {
-        return Generators["click"].num >= 10 && Generators["pixel"].num >= 1; },
-      buy: function() { // t is almost always a shorthand for 'this'.
+      affordable: function() { return Generators["click"].num >= 10 && Generators["pixel"].num >= 1; },
+      buy: function() {
         Generators["click"].num -= 10;
+        Generators["pixel"].num -= 1;
         this.description = "Happy Chef!  He chops and sizzles pixels into a tasty slurry.  But you understand little of what he says.";
         new Log({message: "One pixel reassigned to cheffery."});
+        if (Generators["pixel"].baseProduce < 0) {
+          Generators["pixel"].baseProduce /= 10;
+        } else {
+          Generators["pixel"].baseProduce *= 1.1;
+        }
+        Mods.purchaseMod(this);
+      }
+    }),
+    new Mod({
+      name: "Click Preparation II",
+      label: "ClickChef2",
+      description: "Your chef is obviously overworked.  Maybe you should hire someone to assist him.",
+      makeAvailable: function() { return Generators["pixel"].numLost >= 6 && Mods.purchased("ClickChef"); },
+      affordable: function() {return Generators["click"].num >= 100 && Generators["pixel"].num >= 1; },
+      buy: function() {
+        Generators["click"].num -= 100;
+        Generators["pixel"].num -= 1;
+        this.description = "Bork! Bork! Bork! Doesn't seem very effective, but the Chef is sure more productive, somehow.";
+        new Log({message: "One pixel reassigned to chef assistantery."});
         if (Generators["pixel"].baseProduce < 0) {
           Generators["pixel"].baseProduce /= 10;
         } else {
@@ -187,15 +247,6 @@ var Mods = {
   {
   },
   {
-    name: "Click Preparation II",
-    label: "Click Sous Chef",
-    description: "Your chef is obviously overworked.  Maybe you should hire someone to assist him.",
-    cost: { medium: tabs[0].items[1], num: 10 },
-    bought: false,
-    buy: function() {
-      this.bought = true;
-      if (tabs[0].items[1].produce < 0) tabs[0].items[1].produce /= 10;
-    }
   },
   {
     name: "Click Preparation III",
