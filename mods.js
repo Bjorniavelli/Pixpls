@@ -10,34 +10,37 @@ function Mod (params) {
 
   this.div = $("<div />");
   this.div.addClass(this.label);
+  this.buttonSpan = $("<span />");
+  this.buttonSpan.addClass("buttonSpan");
+  this.button = $("<button />");
+  this.button.html("Buy!");
+  if (this.buy) {
+    var t = this;
+    this.button.click( function() { t.buy(); t.render(); } );
+  }
+  this.notButton = $("<s />");
+  this.notButton.html("Buy");
 
   this.render();
 };
 Mod.prototype.update = function() {
   if ( this.affordable()) {
-    this.notButton.hide();
-    this.button.show();
+    this.notButton.css({display: "none"});
+    this.button.css({display: "block"});
+    //this.notButton.hide();
+    //this.button.show();
   }
   if ( !this.affordable()) {
-    this.notButton.show();
-    this.button.hide();
+    this.notButton.css({display: "black"});
+    this.button.css({display: "none"});
+    // this.notButton.show(); // Show and hide keep freaking out... but why?
+    // this.button.hide();
   }
 };
 Mod.prototype.render = function() {
   this.div.html("<p>" + this.name + "</p>");
   this.div.append("<p>" + this.description + "</p>");
   this.div.append(this.buttonSpan);
-
-  this.buttonSpan = $("<span />");
-  this.buttonSpan.addClass("buttonSpan");
-  this.button = $("<button />");
-  this.button.addClass("Random");
-  this.button.html("Buy!");
-
-  if (this.buy) {
-    var t = this;
-    this.button.click( function() { t.buy(); t.render(); } );
-  }
 
   this.buttonSpan.append(this.button);
   this.buttonSpan.append(this.notButton);
