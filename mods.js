@@ -181,9 +181,9 @@ var Mods = {
       affordable: function() { return Generators["click"].num >= 10; },
       buy: function() {
         Generators["click"].num -= 10;
-        Generators["click"].costPower = 16;
-        Object.defineProperty(Generators["pixel"], "costRatio", {
-          get: function() { return function() {return Math.pow( Generators["pixel"].num, Generators["pixel"].costPower );} },
+        Generators["pixel"].costPower = 16;
+        Object.defineProperty(Generators["pixel"], "cost", {
+          get: function() { return Math.pow( Math.floor(Generators["pixel"].num), Generators["pixel"].costPower ) + 1; },
           configurable: true
         });
         this.description = "The pixels are still eating the same amount.  You're just producing more efficiently.";

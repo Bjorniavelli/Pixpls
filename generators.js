@@ -4,7 +4,7 @@ var Generators = {
     message: "Click!",
     enabled: true,
     flavorText: "Strangely, they give off an appetizing aroma: Ozone and Umamclicki.",
-    costRatio: 0
+    cost: 0
   }),
   pixel: new Generator({
     name: "Pixel",
@@ -69,20 +69,20 @@ function Generator (params) {
 
   // Logic
   this.baseCost = params.baseCost || 1;
-  if (typeof costRatio == "number") {
-    Object.defineProperty(this, "costRatio", {
+  if (typeof cost == "number") {
+    Object.defineProperty(this, "cost", {
       get: function() { return params.costRatio },
       configurable: true
     });
   }
-  else if (typeof costRatio == "function") {
-    Object.defineProperty(this, "costRatio", {
+  else if (typeof cost == "function") {
+    Object.defineProperty(this, "cost", {
       get: costRatio,
       configurable: true
     })
   }
   else {
-    Object.defineProperty(this, "costRatio", {
+    Object.defineProperty(this, "cost", {
       get: function() { return Math.pow(2, Math.floor(this.num))},
       configurable: true
     });
@@ -118,18 +118,18 @@ function Generator (params) {
       return;
     }
 
-    if (t.costTarget.num >= t.cost()) {
-      t.costTarget.num -= t.cost();
+    if (t.costTarget.num >= t.cost) {
+      t.costTarget.num -= t.cost;
       t.num += t.buyAmount;
       return;
     }
 
     //make a log message
-  },
-
-  this.cost = function() {
-    return Math.floor(Math.pow(t.baseCost * t.costRatio, Math.floor(t.num)));
   }
+  //
+  // this.cost = function() {
+  //   return Math.floor(Math.pow(t.baseCost * t.costRatio, Math.floor(t.num)));
+  // }
 };
 Generator.prototype.init = function() {
   var li = $("<li />");
@@ -155,7 +155,7 @@ Generator.prototype.init = function() {
 Generator.prototype.update = function() {
   $("menu ." + key + " var").html(toFixed(Generators[key].num, 2)); // This 'key' is going to cause problems later...
   if (this.costTarget) {
-    this.article.find(".generatorCost").html("Costs <var>" + this.cost() + "</var> " + this.costTarget.name + " per " + this.name + ".");
+    this.article.find(".generatorCost").html("Costs <var>" + this.cost + "</var> " + this.costTarget.name + " per " + this.name + ".");
   }
 
   if (this.produce()) {
