@@ -196,12 +196,12 @@ var Mods = {
       label: "RedGluttony2",
       description: "Well, that didn't work... Turns out some of your pixels just got hungrier.  Maybe we should cull the hungry ones?",
       makeAvailable: function() { return Mods.purchased("RedGluttony"); },
-      affordable: function() { return Generators["pixel"].num > (Math.pow(Generators["pixel"].costPower, 4 / Generators["pixel"].costPower) * 10); },
+      affordable: function() { return Generators["pixel"].num > Math.pow(2, 16 / Generators["pixel"].costPower); }, // I think this cost goes up too fast.
       buy: function() {
         Generators["pixel"].num /= 2;
-        Generators["click"].costPower /= 2;
+        Generators["pixel"].costPower /= 2;
         this.description = "Better.  Turns out Pixel Darwinism is working.  Try again!";
-        new Log({message: "*Jargon* *Jargon* Fun fact: In Star Trek scripts, they just wrote 'Jargon' and they got really good at making stuff up.  Pixel cost reduced to power " + Generators["click"].costPower + "." });
+        new Log({message: "*Jargon* *Jargon* Fun fact: In Star Trek scripts, they just wrote 'Jargon' and they got really good at making stuff up.  Pixel cost reduced to power " + Generators["pixel"].costPower + "." });
       }
     }),
     new Mod({
@@ -241,6 +241,44 @@ var Mods = {
         }
         Mods.purchaseMod(this);
       }
+    }),
+    new Mod({ //B7UmUX68KtE
+      name: "Click Preparation III",
+      label: "ClickChef3",
+      description: "Just two can't provide for all your Pixpls!  You better hire something to prepare the clicks for your chef staff.",
+      makeAvailable: function() { return Generators["pixel"].numLost >= 10 && Mods.purchased("ClickChef2"); },
+      affordable: function() {return Generators["click"].num >= 1000 && Generators["pixel"].num >= 1; },
+      buy: function() {
+        Generators["click"].num -= 1000;
+        Generators["pixel"].num -= 1;
+        this.description = "Makin' di Popedicorn! Shrimpies!  Shrimpies?  Shrimpies!  B7UmUX68KtE";
+        new Log({message: "One pixel reassigned to uhhh... Shrimpies?"});
+        if (Generators["pixel"].baseProduce < 0) {
+          Generators["pixel"].baseProduce /= 10;
+        } else {
+          Generators["pixel"].baseProduce *= 1.1;
+        }
+        Mods.purchaseMod(this);
+      }
+    }),
+    new Mod({
+      name: "Pixel Farming",
+      label: "PixelFarm",
+      description: "The chefs aren't keeping up.  Maybe another approach.  Can the pixels make their own food?",
+      makeAvailable: function() { return Generators["pixel"].numLost >= 20 && Mods.purchased("ClickChef2"); },
+      affordable: function() {return Generators["click"].num >= 1000 && Generators["pixel"].num >= 1; },
+      buy: function() {
+        Generators["click"].num -= 1000;
+        Generators["pixel"].num -= 1;
+        this.description = "You refactor some of your clicks as seeds.  One lonely pixel is responsible for their farming.";
+        new Log({message: "Agriclicktural revolution?  Boundless wealth will soon be <s>theirs</s> yours!"});
+        if (Generators["pixel"].baseProduce < 0) {
+          Generators["pixel"].baseProduce *= -1;
+        } else {
+          Generators["pixel"].baseProduce *= 10;
+        }
+        Mods.purchaseMod(this);
+      }
     })
   ],
   availableMods: [],
@@ -249,32 +287,6 @@ var Mods = {
 }
 
 /*var upgrades = [
-  {
-  },
-  {
-  },
-  {
-    name: "Click Preparation III",
-    label: "Click Prep Chef",
-    description: "Just two people can't provide for all your Pixpls!  You better hire some to prepare the clicks for your chef staff.",
-    cost: { medium: tabs[0].items[1], num: 100 },
-    bought: false,
-    buy: function() {
-      this.bought = true;
-      if (tabs[0].items[1].produce < 0) tabs[0].items[1].produce /= 10;
-    }
-  },
-  {
-    name: "Pixel Farming",
-    label: "Pixel Farming",
-    description: "Pixels can farm their own clicks, now!",
-    cost: { medium: tabs[0].items[0], num: 1000 },
-    bought: false,
-    buy: function() {
-      this.bought = true;
-      if (tabs[0].items[1].produce <= 0) tabs[0].items[1].produce = 0.001;
-    }
-  },
   {
     name: "Churn Reduction",
     label: "Make a Space",
