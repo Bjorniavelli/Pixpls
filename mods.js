@@ -182,8 +182,9 @@ var Mods = {
       buy: function() {
         Generators["click"].num -= 10;
         Generators["click"].costPower = 16;
-        Object.defineProperty(this, "costRatio", {
-          get: function() { return function() {return Math.pow( Generators["click"].num, Generators["click"].costPower );} }
+        Object.defineProperty(Generators["pixel"], "costRatio", {
+          get: function() { return function() {return Math.pow( Generators["pixel"].num, Generators["pixel"].costPower );} },
+          configurable: true
         });
         this.description = "The pixels are still eating the same amount.  You're just producing more efficiently.";
         new Log({message: "Ohhhh!  You were using an inverse phase relation on your mouse.  We'll filter out those Star Trekian woes.  That will make clicks more nutritious."});
@@ -195,9 +196,8 @@ var Mods = {
       label: "RedGluttony2",
       description: "Well, that didn't work... Turns out some of your pixels just got hungrier.  Maybe we should cull the hungry ones?",
       makeAvailable: function() { return Mods.purchased("RedGluttony"); },
-      affordable: function() { return Generators["pixel"].num > (Math.pow(Generators["click"].costPower, 4 / Generators["click"].costPower) * 10); },
+      affordable: function() { return Generators["pixel"].num > (Math.pow(Generators["pixel"].costPower, 4 / Generators["pixel"].costPower) * 10); },
       buy: function() {
-        console.log("Again?");
         Generators["pixel"].num /= 2;
         Generators["click"].costPower /= 2;
         this.description = "Better.  Turns out Pixel Darwinism is working.  Try again!";

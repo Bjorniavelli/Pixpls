@@ -71,17 +71,20 @@ function Generator (params) {
   this.baseCost = params.baseCost || 1;
   if (typeof costRatio == "number") {
     Object.defineProperty(this, "costRatio", {
-      get: function() { return params.costRatio }
+      get: function() { return params.costRatio },
+      configurable: true
     });
   }
   else if (typeof costRatio == "function") {
     Object.defineProperty(this, "costRatio", {
-      get: costRatio
+      get: costRatio,
+      configurable: true
     })
   }
   else {
     Object.defineProperty(this, "costRatio", {
-      get: function() { return Math.pow(2, Math.floor(this.num))}
+      get: function() { return Math.pow(2, Math.floor(this.num))},
+      configurable: true
     });
   }
   Object.defineProperty(this, "costTarget", {
