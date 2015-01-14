@@ -14,10 +14,6 @@ function Mod (params) {
   this.buttonSpan.addClass("buttonSpan");
   this.button = $("<button />");
   this.button.html("Buy!");
-  if (this.buy) {
-    var t = this;
-    this.button.click( function() { t.buy(); t.render(); } );
-  }
   this.notButton = $("<s />");
   this.notButton.html("Buy");
 
@@ -31,7 +27,7 @@ Mod.prototype.update = function() {
     //this.button.show();
   }
   if ( !this.affordable()) {
-    this.notButton.css({display: "black"});
+    this.notButton.css({display: "inline"});
     this.button.css({display: "none"});
     // this.notButton.show(); // Show and hide keep freaking out... but why?
     // this.button.hide();
@@ -44,6 +40,11 @@ Mod.prototype.render = function() {
 
   this.buttonSpan.append(this.button);
   this.buttonSpan.append(this.notButton);
+
+  if (this.buy) {
+    var t = this;
+    this.buttonSpan.on( "click", "button", function() { t.buy(); t.render(); } );
+  }
 
   this.update();
 };
