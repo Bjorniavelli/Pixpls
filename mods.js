@@ -10,6 +10,7 @@ function Mod (params) {
 
   this.div = $("<div />");
   this.div.addClass(this.label);
+  this.div.addClass("mod");
   this.buttonSpan = $("<span />");
   this.buttonSpan.addClass("buttonSpan");
   this.button = $("<button />");
@@ -34,8 +35,8 @@ Mod.prototype.update = function() {
   }
 };
 Mod.prototype.render = function() {
-  this.div.html("<p>" + this.name + "</p>");
-  this.div.append("<p>" + this.description + "</p>");
+  this.div.html("<p class=\"name\">" + this.name + "</p>");
+  this.div.append("<p class=\"description\">" + this.description + "</p>");
   this.div.append(this.buttonSpan);
 
   this.buttonSpan.append(this.button);
@@ -202,6 +203,9 @@ var Mods = {
         Generators["pixel"].costPower /= 2;
         this.description = "Better.  Turns out Pixel Darwinism is working.  Try again!";
         new Log({message: "*Jargon* *Jargon* Fun fact: In Star Trek scripts, they just wrote 'Jargon' and they got really good at making stuff up.  Pixel cost reduced to power " + Generators["pixel"].costPower + "." });
+        if (Generators["pixel"].costPower <= 2) {
+          Mods.purchaseMod(this);
+        }
       }
     }),
     new Mod({

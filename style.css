@@ -1,0 +1,63 @@
+header {
+  display: block;
+  height: 50px;
+}
+header h1 {
+  float: left;
+  margin: 0;
+}
+header p {
+  float: right;
+}
+
+section {
+  width: 100%;
+  text-decoration: none;
+  margin: 0;
+}
+section>menu {
+  display: inline-block;
+  width: 20%;
+  list-style-type: none;
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid black;
+  background-color: #DDDDDD;
+}
+section>article {
+  display: inline-block;
+}
+
+.mods {
+  clear: both;
+  border: 1px solid black;
+}
+.mod {
+  display: inline-block;
+  vertical-align: top;
+  padding: 5px;
+  margin: 10px;
+  width: 110px;
+  background-color: #FFEEDD;
+  border: 1px dashed black;
+}
+
+.logs {
+  clear: both;
+}
+
+.name {
+  font-size: larger;
+  font-style: bold;
+}
+.description {
+
+}
+.flavortext {
+  font-size: smaller;
+  font-style: italic;
+  text-align: right;
+}
+span {
+  align: center;
+}
