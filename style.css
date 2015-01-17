@@ -26,6 +26,7 @@ section>menu {
 }
 section>article {
   display: inline-block;
+  vertical-align: top;
 }
 
 .mods {

@@ -15,6 +15,9 @@ var Pixpls = {
       var generator = Generators[key];
       generator.init();
       menu.append(generator.li);
+      if (key != "click") {
+        generator.li.hide();
+      }
     }
 
     $("menu").replaceWith(menu);
@@ -49,6 +52,7 @@ var Pixpls = {
 };
 $(document).ready(function() {
   Pixpls.buildGeneratorMenu();
+  $("#generators").hide();
   Mods.render();
 
   window.setInterval(function() {

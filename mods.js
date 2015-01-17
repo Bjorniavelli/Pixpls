@@ -8,17 +8,19 @@ function Mod (params) {
   this.affordable = params.affordable || function() { return true; };
   this.buy = params.buy || function() { new Log({message: "Bought " + t.name + "."}); };
 
-  this.div = $("<div />");
-  this.div.addClass(this.label);
-  this.div.addClass("mod");
-  this.buttonSpan = $("<span />");
-  this.buttonSpan.addClass("buttonSpan");
-  this.button = $("<button />");
-  this.button.html("Buy!");
-  this.notButton = $("<s />");
-  this.notButton.html("Buy");
+  if (this.hidden != true) {
+    this.div = $("<div />");
+    this.div.addClass(this.label);
+    this.div.addClass("mod");
+    this.buttonSpan = $("<span />");
+    this.buttonSpan.addClass("buttonSpan");
+    this.button = $("<button />");
+    this.button.html("Buy!");
+    this.notButton = $("<s />");
+    this.notButton.html("Buy");
 
-  this.render();
+    this.render();
+  }
 };
 Mod.prototype.update = function() {
   if ( this.affordable()) {
@@ -62,6 +64,15 @@ var Mods = {
       this.availableMods[i].update();
     }
 
+    for (var i = 0; i < this.hiddenMods.length; i++) {
+      if (this.hiddenMods[i].makeAvailable()) {
+        this.hiddenMods[i].buy();
+        var d = this.hiddenMods[i];
+        this.hiddenMods.splice(i, 1);
+        delete d;
+      }
+    }
+
     if (this.availableMods.length == 0) {
       this.divAvailable.hide();
     } else {
@@ -90,6 +101,7 @@ var Mods = {
     this.div.append(this.divPurchased);
 
     $(".mods").replaceWith(this.div);
+    $(".mods").hide();
   },
 
   displayMod: function(mod) {
@@ -287,7 +299,128 @@ var Mods = {
   ],
   availableMods: [],
   purchasedMods: [],
-  hiddenMods: []
+  hiddenMods: [
+    new Mod({
+      hidden: true,
+      name: "Show Generator Menu",
+      label: "ShowGenerator",
+      description: "This should be hidden, but it will enable the generator menu after a short time.",
+      makeAvailable: function() {return Pixpls.numTicks >= 10; },
+      buy: function() {
+        $("#generators").show();
+      }
+    }),
+    new Mod({
+      hidden: true,
+      name: "Show Mods",
+      label: "ShowMods",
+      descripton: "This wil make the mods available when there are some.",
+      makeAvailable: function() {
+        return Mods.availableMods.length > 0 &&
+                Pixpls.numTicks >= 20 &&
+                $("#generators:visible");
+      },
+      buy: function() {
+        $(".mods").show();
+      }
+    }),
+    new Mod({
+      hidden: true,
+      name: "Show Pixel Generator",
+      label: "ShowPixelGen",
+      description: "Display an entry in the generators menu.",
+      makeAvailable: function() {
+        return Generators["click"].num >= 5;
+      },
+      buy: function() {
+        Generators["pixel"].li.show();
+      }
+    }),
+    new Mod({
+      hidden: true,
+      name: "Show Renderer Generator",
+      label: "ShowRendererGen",
+      description: "Display an entry in the generators menu.",
+      makeAvailable: function() {
+        return Generators["pixel"].num >= 5;
+      },
+      buy: function() {
+        Generators["renderer"].li.show();
+      }
+    }),
+    new Mod({
+      hidden: true,
+      name: "Show Extruder Generator",
+      label: "ShowExtruderGen",
+      description: "Display an entry in the generators menu.",
+      makeAvailable: function() {
+        return Generators["renderer"].num >= 5;
+      },
+      buy: function() {
+        Generators["extruder"].li.show();
+      }
+    }),
+    new Mod({
+      hidden: true,
+      name: "Show Electronics Kit Generator",
+      label: "ShowEKGen",
+      description: "Display an entry in the generators menu.",
+      makeAvailable: function() {
+        return Generators["extruder"].num >= 5;
+      },
+      buy: function() {
+        Generators["electronicskit"].li.show();
+      }
+    }),
+    new Mod({
+      hidden: true,
+      name: "Show Factory Generator",
+      label: "ShowFactoryGen",
+      description: "Display an entry in the generators menu.",
+      makeAvailable: function() {
+        return Generators["electronicskit"].num >= 5;
+      },
+      buy: function() {
+        Generators["factory"].li.show();
+      }
+    }),
+    new Mod({
+      hidden: true,
+      name: "Show Cement Printer Generator",
+      label: "ShowCPGen",
+      description: "Display an entry in the generators menu.",
+      makeAvailable: function() {
+        return Generators["factory"].num >= 5;
+      },
+      buy: function() {
+        Generators["cementprinter"].li.show();
+      }
+    }),
+    new Mod({
+      hidden: true,
+      name: "Show Design Lab Generator",
+      label: "ShowDLGen",
+      description: "Display an entry in the generators menu.",
+      makeAvailable: function() {
+        return Generators["cementprinter"].num >= 5;
+      },
+      buy: function() {
+        Generators["designlab"].li.show();
+      }
+    }),
+    new Mod({
+      hidden: true,
+      name: "Show AI Generator",
+      label: "ShowAIGen",
+      description: "Display an entry in the generators menu.",
+      makeAvailable: function() {
+        return Generators["designlab"].num >= 5;
+      },
+      buy: function() {
+        Generators["ai"].li.show();
+      }
+    })
+  ]
 }
 
 /*var upgrades = [
