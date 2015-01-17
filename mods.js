@@ -52,7 +52,7 @@ Mod.prototype.render = function() {
   this.update();
 };
 
-var Mods = {
+Mods = {
   update: function() {
     for (var i = 0; i < this.unavailableMods.length; i++) {
       if (this.unavailableMods[i].makeAvailable()) {
@@ -323,7 +323,7 @@ var Mods = {
       buy: function() {
         $(".mods").show();
       }
-    }),
+/*    }),
     new Mod({
       hidden: true,
       name: "Show Pixel Generator",
@@ -418,7 +418,7 @@ var Mods = {
       },
       buy: function() {
         Generators["ai"].li.show();
-      }
+      }*/
     })
   ]
 }

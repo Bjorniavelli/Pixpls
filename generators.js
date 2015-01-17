@@ -1,6 +1,7 @@
 var Generators = {
   click: new Generator({
     name: "Click",
+    label: "CGen",
     message: "Click!",
     enabled: true,
     flavorText: "Strangely, they give off an appetizing aroma: Ozone and Umamclicki.",
@@ -8,6 +9,7 @@ var Generators = {
   }),
   pixel: new Generator({
     name: "Pixel",
+    label: "PGen",
     produceTarget: "click",
     costTarget: "click",
     produce: -1,
@@ -15,6 +17,7 @@ var Generators = {
   }),
   renderer: new Generator({
     name: "Renderer",
+    label: "RGen",
     num: 0,
     produceTarget: "pixel",
     costTarget: "pixel",
@@ -22,36 +25,42 @@ var Generators = {
   }),
   extruder: new Generator({
     name: "Extruder",
+    label: "EGen",
     produceTarget: "renderer",
     costTarget: "renderer",
     produce: 1
   }),
   electronicskit: new Generator({
     name: "Electronics Kit",
+    label: "EKGen",
     produceTarget: "extruder",
     costTarget: "extruder",
     produce: 1
   }),
   factory: new Generator({
     name: "Factory",
+    label: "FGen",
     produceTarget: "electronicskit",
     costTarget: "electronicskit",
     produce: 1
   }),
   cementprinter: new Generator({
     name: "Cement Printer",
+    label: "CPGen",
     produceTarget: "factory",
     costTarget: "factory",
     produce: 1
   }),
   designlab: new Generator({
     name: "Design Lab",
+    label: "DLGen",
     produceTarget: "cementprinter",
     costTarget: "cementprinter",
     produce: 1
   }),
   ai: new Generator({
     name: "AI",
+    label: "AIGen",
     produceTarget: "designlab",
     costTarget: "designlab",
     produce: 1
@@ -65,6 +74,7 @@ function Generator (params) {
 
   // Descriptions
   this.name = params.name;
+  this.label = params.label;
   this.flavorText = params.flavorText;
 
   // Logic
@@ -105,6 +115,22 @@ function Generator (params) {
 
   // Local
   var t = this;
+
+  //Appropriate Mods:
+  if (this.label != "CGen") { $(document).ready(function() {
+    Mods.hiddenMods.push (new Mod({
+      hidden: true,
+      name: "Show " + t.name + " Generator",
+      label: "Show" + t.label + "Gen",
+      description: "Display an entry in the generators menu for " + t.name + ".",
+      makeAvailable: function() {
+        return t.produceTarget().num >= 5;
+      },
+      buy: function() {
+        t.li.show();
+      }
+    }));
+  }); }
 
   this.select = function(e) {
     e.preventDefault();
