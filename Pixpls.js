@@ -9,44 +9,22 @@ var Pixpls = {
   numTicks: 0,
   devMode: true,
 
-  buildGeneratorMenu: function() {
-    var menu = $("<menu />");
-
-    for (key in Pixpls.Generators.list) {
-      var generator = Pixpls.Generators.list[key];
-      generator.init();
-      menu.append(generator.li);
-      if (key != "click") {
-        generator.li.hide();
-      }
-    }
-
-    $("menu").replaceWith(menu);
-  },
-
-  updateGeneratorMenu: function() {
-    for (key in Pixpls.Generators.list) {
-      Pixpls.Generators.list[key].update();
-    }
-  },
-
   init: function() {
     Pixpls.Data.init();
 
-    Pixpls.buildGeneratorMenu();
-    $("#generators").hide();
+    Pixpls.Generators.init();
     Pixpls.Mods.render();
 
     $("header").on("click", "#savebutton", Pixpls.save);
     $("header").on("click", "#loadbutton", Pixpls.load);
     $("header").on("click", "#resetbutton", Pixpls.reset);
-//    Pixpls.handleSaveButtons();
   },
   update: function() {
     Pixpls.numTicks++;
     $("#ticknumber").html(toFixed(Pixpls.numTicks, 0));
 
-    Pixpls.updateGeneratorMenu();
+    Pixpls.Generators.update();
+//    Pixpls.updateGeneratorMenu();
     Pixpls.Mods.update();
   }
 };

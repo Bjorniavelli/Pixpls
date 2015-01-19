@@ -1,5 +1,33 @@
 Pixpls.Generators = {
-  list: {}
+  list: {},
+  init: function() {
+    var section = $("<section />"); // I don't think we need to add a class, because we'll set it as a this.
+    var menu = $("<menu />");
+    var article = $("<article />");
+
+    for (key in Pixpls.Generators.list) {
+      var generator = Pixpls.Generators.list[key];
+      generator.init();
+      menu.append(generator.li);
+      if (key != "click") {
+        generator.li.hide();
+      }
+    }
+
+    section.append(menu);
+    section.append(article);
+
+    this.section = section;
+    this.menu = menu;
+    this.article = article;
+
+    $("section").replaceWith(this.section);
+  },
+  update: function() {
+    for (key in this.list) {
+      this.list[key].update();
+    }
+  }
 }
 
 function Generator (params) {
