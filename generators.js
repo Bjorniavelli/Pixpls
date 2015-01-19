@@ -36,9 +36,9 @@ Pixpls.Generators = {
 }
 
 function Generator (params) {
-  var produceTarget = params.produceTarget;
-  var costTarget = params.costTarget;
-  var costRatio = params.costRatio;
+  this._produceTarget = params.produceTarget;
+  this._costTarget = params.costTarget;
+  this.costRatio = params.costRatio;
 
   // Descriptions
   this.name = params.name;
@@ -46,32 +46,8 @@ function Generator (params) {
   this.flavorText = params.flavorText;
 
   // Logic
-  this.baseCost = params.baseCost || 1;
-  if (typeof cost == "number") {
-    Object.defineProperty(this, "cost", {
-      get: function() { return params.costRatio },
-      configurable: true
-    });
-  }
-  else if (typeof cost == "function") {
-    Object.defineProperty(this, "cost", {
-      get: costRatio,
-      configurable: true
-    })
-  }
-  else {
-    Object.defineProperty(this, "cost", {
-      get: function() { return Math.pow(2, Math.floor(this.num))},
-      configurable: true
-    });
-  }
-  Object.defineProperty(this, "costTarget", {
-    get: function () { return Pixpls.Generators.list[costTarget]; }
-  });
-  this.produceTarget = function () { return Pixpls.Generators.list[produceTarget]; }; // I can make this a getter, but how in the class def?
-  this.baseProduce = params.produce;
-  this.produce = function() {return Math.floor(this.num) * this.baseProduce; };
-  this.enabled = params.enabled;
+  this.baseCost = params.cost || 1;
+  this.baseProduce = params.produce || 0;
 
   // Optional
   this.num = params.num || 0;
@@ -81,34 +57,55 @@ function Generator (params) {
   this.buyAmount = 1;
   this.numLost = 0;
 
-  // Local
+  // Mods
+  this.createDisplayMod();
+
+  Pixpls.Generators.list[params.key] = this;
+};
+
+Object.defineProperty(Generator.prototype, "cost", {
+  get: function() {
+    switch(typeof this.costRatio) {
+      case "number":
+        return this.costRatio;
+      case "function":
+        return this.costRatio();
+      default:
+        return Math.pow(2, Math.floor(this.num));
+    }
+  }
+});
+Object.defineProperty(Generator.prototype, "costTarget", {
+  get: function() { return Pixpls.Generators.list[this._costTarget]; }
+});
+Object.defineProperty(Generator.prototype, "produceTarget", {
+  get: function() { return Pixpls.Generators.list[this._produceTarget]; }
+});
+Object.defineProperty(Generator.prototype, "produce", {
+  get: function() { return Math.floor(this.num) * this.baseProduce; }
+})
+
+
+Generator.prototype.createDisplayMod = function() {
   var t = this;
 
-  //Appropriate Mods:
-  if (this.label != "CGen") { $(document).ready(function() {
+//  if (this.label != "CGen") { $(document).ready(function() {
+  if (this.label != "CGen") {
     Pixpls.Mods.hiddenMods.push (new Mod({
       hidden: true,
       name: "Show " + t.name + " Generator",
       label: "Show" + t.label + "Gen",
       description: "Display an entry in the generators menu for " + t.name + ".",
       makeAvailable: function() {
-        return t.produceTarget().num >= 5;
+        return t.produceTarget.num >= 5;
       },
       buy: function() {
         t.li.show();
       }
     }));
-  }); }
-
-  this.createSaveObject = function() {
-    var r = {};
-
-    // Lost focus... I need to figure out what someone wrote about not combining data and functions...?
   }
-
-  Pixpls.Generators.list[params.key] = this;
-};
-
+//  }); }
+}
 Generator.prototype.select = function() {
   $("article").replaceWith(this.article);
 };
@@ -153,9 +150,9 @@ Generator.prototype.update = function() {
     this.article.find(".generatorCost").html("Costs <var>" + this.cost + "</var> " + this.costTarget.name + " per " + this.name + ".");
   }
 
-  if (this.produce()) {
-    var amount = this.produce() * (Pixpls.tickLength / 1000);
-    var tar = this.produceTarget();
+  if (this.produce) {
+    var amount = this.produce * (Pixpls.tickLength / 1000);
+    var tar = this.produceTarget;
     if (tar.num + amount > 0) {
       tar.num += amount;
     }
