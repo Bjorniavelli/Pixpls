@@ -2,6 +2,7 @@ function Mod (params) {
   this.name = params.name || "";
   this.label = params.label || "";
   this.description = params.description || "";
+  this.hidden = params.hidden || false;
 
   var t = this;
   this.makeAvailable = params.makeAvailable || function() { return false; };
@@ -20,6 +21,12 @@ function Mod (params) {
     this.notButton.html("Buy");
 
     this.render();
+  }
+
+  if (this.hidden) {
+    Pixpls.Mods.hiddenMods.push(this);
+  } else {
+    Pixpls.Mods.unavailableMods.push(this);
   }
 };
 Mod.prototype.update = function() {

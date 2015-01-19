@@ -7,11 +7,11 @@ Pixpls.Data = {
 
     // Mods Init
     for (var i = 0; i < this.Mods.length; i++) {
-      Pixpls.Mods.unavailableMods.push(new Mod(this.Mods[i]));
+      new Mod(this.Mods[i]);
     }
-    for (var i = 0; i < this.HiddenMods.length; i++) {
-      Pixpls.Mods.hiddenMods.push(new Mod(this.HiddenMods[i]));
-    }
+    // for (var i = 0; i < this.HiddenMods.length; i++) {
+    //   Pixpls.Mods.hiddenMods.push(new Mod(this.HiddenMods[i]));
+    // }
 
     // Logs Init
     new Log({
@@ -241,9 +241,9 @@ Pixpls.Data = {
         }
         Pixpls.Mods.purchaseMod(this);
       }
-    }
-  ],
-  HiddenMods: [
+    },
+
+    //Hidden Mods
     {
       hidden: true,
       name: "Show Generator Menu",

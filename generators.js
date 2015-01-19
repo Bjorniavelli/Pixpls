@@ -29,7 +29,9 @@ Pixpls.Generators = {
     }
   },
   save: function() {
-    console.log( "Generators Save!" );
+    for (key in this.list) {
+      var s = this.list[key].createSaveObject();
+    }
   }
 }
 
@@ -97,6 +99,12 @@ function Generator (params) {
       }
     }));
   }); }
+
+  this.createSaveObject = function() {
+    var r = {};
+
+    // Lost focus... I need to figure out what someone wrote about not combining data and functions...?
+  }
 
   Pixpls.Generators.list[params.key] = this;
 };
