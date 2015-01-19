@@ -1,71 +1,6 @@
-var Generators = {
-  click: new Generator({
-    name: "Click",
-    label: "CGen",
-    message: "Click!",
-    enabled: true,
-    flavorText: "Strangely, they give off an appetizing aroma: Ozone and Umamclicki.",
-    cost: 0
-  }),
-  pixel: new Generator({
-    name: "Pixel",
-    label: "PGen",
-    produceTarget: "click",
-    costTarget: "click",
-    produce: -1,
-    flavorText: "Little dots that shine?  Fantastic!"
-  }),
-  renderer: new Generator({
-    name: "Renderer",
-    label: "RGen",
-    num: 0,
-    produceTarget: "pixel",
-    costTarget: "pixel",
-    produce: 1
-  }),
-  extruder: new Generator({
-    name: "Extruder",
-    label: "EGen",
-    produceTarget: "renderer",
-    costTarget: "renderer",
-    produce: 1
-  }),
-  electronicskit: new Generator({
-    name: "Electronics Kit",
-    label: "EKGen",
-    produceTarget: "extruder",
-    costTarget: "extruder",
-    produce: 1
-  }),
-  factory: new Generator({
-    name: "Factory",
-    label: "FGen",
-    produceTarget: "electronicskit",
-    costTarget: "electronicskit",
-    produce: 1
-  }),
-  cementprinter: new Generator({
-    name: "Cement Printer",
-    label: "CPGen",
-    produceTarget: "factory",
-    costTarget: "factory",
-    produce: 1
-  }),
-  designlab: new Generator({
-    name: "Design Lab",
-    label: "DLGen",
-    produceTarget: "cementprinter",
-    costTarget: "cementprinter",
-    produce: 1
-  }),
-  ai: new Generator({
-    name: "AI",
-    label: "AIGen",
-    produceTarget: "designlab",
-    costTarget: "designlab",
-    produce: 1
-  })
-};
+Pixpls.Generators = {
+  list: {}
+}
 
 function Generator (params) {
   var produceTarget = params.produceTarget;
@@ -98,9 +33,9 @@ function Generator (params) {
     });
   }
   Object.defineProperty(this, "costTarget", {
-    get: function () { return Generators[costTarget]; }
+    get: function () { return Pixpls.Generators.list[costTarget]; }
   });
-  this.produceTarget = function () { return Generators[produceTarget]; }; // I can make this a getter, but how in the class def?
+  this.produceTarget = function () { return Pixpls.Generators.list[produceTarget]; }; // I can make this a getter, but how in the class def?
   this.baseProduce = params.produce;
   this.produce = function() {return Math.floor(this.num) * this.baseProduce; };
   this.enabled = params.enabled;
@@ -118,7 +53,7 @@ function Generator (params) {
 
   //Appropriate Mods:
   if (this.label != "CGen") { $(document).ready(function() {
-    Mods.hiddenMods.push (new Mod({
+    Pixpls.Mods.hiddenMods.push (new Mod({
       hidden: true,
       name: "Show " + t.name + " Generator",
       label: "Show" + t.label + "Gen",
@@ -152,10 +87,8 @@ function Generator (params) {
 
     //make a log message
   }
-  //
-  // this.cost = function() {
-  //   return Math.floor(Math.pow(t.baseCost * t.costRatio, Math.floor(t.num)));
-  // }
+
+  Pixpls.Generators.list[params.key] = this;
 };
 Generator.prototype.init = function() {
   var li = $("<li />");
@@ -179,7 +112,7 @@ Generator.prototype.init = function() {
   this.article = article;
 };
 Generator.prototype.update = function() {
-  $("menu ." + key + " var").html(toFixed(Generators[key].num, 2)); // This 'key' is going to cause problems later...
+  $("menu ." + key + " var").html(toFixed(Pixpls.Generators.list[key].num, 2)); // This 'key' is going to cause problems later...
   if (this.costTarget) {
     this.article.find(".generatorCost").html("Costs <var>" + this.cost + "</var> " + this.costTarget.name + " per " + this.name + ".");
   }

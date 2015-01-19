@@ -3,6 +3,7 @@ function toFixed(num, precision) { // Grabbed off of StackOverflow -> floor inst
 }
 
 var Pixpls = {
+// Start Date?
   ver: "pre-alpha",
   tickLength: 100,
   numTicks: 0,
@@ -11,8 +12,8 @@ var Pixpls = {
   buildGeneratorMenu: function() {
     var menu = $("<menu />");
 
-    for (key in Generators) {
-      var generator = Generators[key];
+    for (key in Pixpls.Generators.list) {
+      var generator = Pixpls.Generators.list[key];
       generator.init();
       menu.append(generator.li);
       if (key != "click") {
@@ -24,8 +25,8 @@ var Pixpls = {
   },
 
   updateGeneratorMenu: function() {
-    for (key in Generators) {
-      Generators[key].update();
+    for (key in Pixpls.Generators.list) {
+      Pixpls.Generators.list[key].update();
     }
   },
   updateLogs: function() {
@@ -48,21 +49,33 @@ var Pixpls = {
     }
 
     $("footer").replaceWith(footer);
-  }
-};
-$(document).ready(function() {
-  Pixpls.buildGeneratorMenu();
-  $("#generators").hide();
-  Mods.render();
+  },
 
-  window.setInterval(function() {
+  init: function() {
+    Pixpls.Data.init();
+
+    Pixpls.buildGeneratorMenu();
+    $("#generators").hide();
+    Pixpls.Mods.render();
+
+    $("header").on("click", "#savebutton", Pixpls.save);
+    $("header").on("click", "#loadbutton", Pixpls.load);
+    $("header").on("click", "#resetbutton", Pixpls.reset);
+//    Pixpls.handleSaveButtons();
+  },
+  update: function() {
     Pixpls.numTicks++;
     $("#ticknumber").html(toFixed(Pixpls.numTicks, 0));
 
     Pixpls.updateGeneratorMenu();
-    Mods.update();
+    Pixpls.Mods.update();
     Pixpls.updateLogs();
-  }, Pixpls.tickLength);
+  }
+};
+$(document).ready(function() {
+  Pixpls.init();
+
+  window.setInterval(Pixpls.update, Pixpls.tickLength);
 });
 
 // Just a note that the tabs will be Generators, Hero, Crafting, Camp, Help, Settings
