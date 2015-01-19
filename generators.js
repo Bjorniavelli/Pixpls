@@ -27,6 +27,9 @@ Pixpls.Generators = {
     for (key in this.list) {
       this.list[key].update();
     }
+  },
+  save: function() {
+    console.log( "Generators Save!" );
   }
 }
 
@@ -95,36 +98,33 @@ function Generator (params) {
     }));
   }); }
 
-  this.select = function(e) {
-    e.preventDefault();
-
-    $("article").replaceWith(t.article);
-  },
-
-  this.buy = function() {
-    if (!t.costTarget) {
-      t.num += t.buyAmount;
-      return;
-    }
-
-    if (t.costTarget.num >= t.cost) {
-      t.costTarget.num -= t.cost;
-      t.num += t.buyAmount;
-      return;
-    }
-
-    //make a log message
-  }
-
   Pixpls.Generators.list[params.key] = this;
 };
+
+Generator.prototype.select = function() {
+  $("article").replaceWith(this.article);
+};
+Generator.prototype.buy = function() {
+  if (!this.costTarget) {
+    this.num += this.buyAmount;
+    return;
+  }
+
+  if (this.costTarget.num >= this.cost) {
+    this.costTarget.num -= this.cost;
+    this.num += this.buyAmount;
+    return;
+  }
+};
 Generator.prototype.init = function() {
+  var t = this;
   var li = $("<li />");
+
   li.addClass(key);
   li.html("<a href=\"\">" + this.name + "</a>: <var>" + toFixed(this.num, 2) + "</var>");
   li.append("<button>" + this.message + "</button>");
-  li.find("a").click(this.select);
-  li.find("button").click(this.buy);
+  li.on("click", "a", function(e) { e.preventDefault(); t.select(); });
+  li.on("click", "button", function() { t.buy(); });
 
   this.li = li;
 

@@ -1,5 +1,7 @@
 function toFixed(num, precision) { // Grabbed off of StackOverflow -> floor instead of round
-  return (+(Math.floor(+(num + 'e' + precision)) + 'e' + -precision)).toFixed(precision);
+  var r = (+(Math.floor(+(num + 'e' + precision)) + 'e' + -precision));
+  if (isNaN(r)) { r = 0; }
+  return r.toFixed(precision);
 }
 
 var Pixpls = {
@@ -24,7 +26,6 @@ var Pixpls = {
     $("#ticknumber").html(toFixed(Pixpls.numTicks, 0));
 
     Pixpls.Generators.update();
-//    Pixpls.updateGeneratorMenu();
     Pixpls.Mods.update();
   }
 };

@@ -7,7 +7,7 @@ Pixpls.save = function() {
   localStorage["ver"] = Pixpls.ver;
   localStorage["numTicks"] = Pixpls.numTicks;
 
-  //Generators.save();
+  Pixpls.Generators.save();
   // Mods.save();
   // Logs.save(); // No need to save logs, I think.
 }
