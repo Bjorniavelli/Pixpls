@@ -29,27 +29,6 @@ var Pixpls = {
       Pixpls.Generators.list[key].update();
     }
   },
-  updateLogs: function() {
-    if (Logs.length > maxLogs) {
-      Logs = Logs.slice(0, maxLogs);
-    }
-
-    var footer = $("<footer />");
-    var i = 0;
-
-    for (index in Logs) {
-      if (i >= maxDisplayLogs) {
-        break;
-      }
-
-      if (Logs[index].enabled) {
-        footer.append("<p>" + Logs[index].message + "</p>");
-        i++;
-      }
-    }
-
-    $("footer").replaceWith(footer);
-  },
 
   init: function() {
     Pixpls.Data.init();
@@ -69,7 +48,6 @@ var Pixpls = {
 
     Pixpls.updateGeneratorMenu();
     Pixpls.Mods.update();
-    Pixpls.updateLogs();
   }
 };
 $(document).ready(function() {

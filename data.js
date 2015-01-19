@@ -12,6 +12,14 @@ Pixpls.Data = {
     for (var i = 0; i < this.HiddenMods.length; i++) {
       Pixpls.Mods.hiddenMods.push(new Mod(this.HiddenMods[i]));
     }
+
+    // Logs Init
+    new Log({
+      message: "Welcome to Pixpls! (ver." + Pixpls.ver + ")"
+    });
+    new Log({
+      message: "This *is* a clicky game.  How about some tasty, endorphin-producing clicking?"
+    });
   },
 
   Generators: {
@@ -100,7 +108,7 @@ Pixpls.Data = {
       makeAvailable: function() {return Pixpls.devMode; },
       affordable: function() { return true; },
       buy: function () {
-        Mods.purchaseMod(this);
+        Pixpls.Mods.purchaseMod(this);
         new Log({message: "Bought a useless upgrade!  Go you!"});
       }
     },
@@ -129,22 +137,17 @@ Pixpls.Data = {
       label: "RedGluttony",
       description: "Those pixels seem to be eating an inordinate amount.  Maybe you're clicking wrong?  This will train you.",
       makeAvailable: function() { return Pixpls.Generators.list["pixel"].num >= 3; },
-      affordable: function() {
-
-        console.log(Pixpls.Generators);
-        console.log(Pixpls.Generators.list);
-
-        return Pixpls.Generators.list["click"].num >= 10; },
+      affordable: function() { return Pixpls.Generators.list["click"].num >= 10; },
       buy: function() {
         Pixpls.Generators.list["click"].num -= 10;
         Pixpls.Generators.list["pixel"].costPower = 16;
         Object.defineProperty(Pixpls.Generators.list["pixel"], "cost", {
-          get: function() { return Math.pow( Math.floor(Generators["pixel"].num), Generators["pixel"].costPower ) + 1; },
+          get: function() { return Math.pow( Math.floor(Pixpls.Generators.list["pixel"].num), Pixpls.Generators.list["pixel"].costPower ) + 1; },
           configurable: true
         });
         this.description = "The pixels are still eating the same amount.  You're just producing more efficiently.";
         new Log({message: "Ohhhh!  You were using an inverse phase relation on your mouse.  We'll filter out those Star Trekian woes.  That will make clicks more nutritious."});
-        Mods.purchaseMod(this);
+        Pixpls.Mods.purchaseMod(this);
       }
     },
     {
@@ -157,7 +160,7 @@ Pixpls.Data = {
         Pixpls.Generators.list["pixel"].num /= 2;
         Pixpls.Generators.list["pixel"].costPower /= 2;
         this.description = "Better.  Turns out Pixel Darwinism is working.  Try again!";
-        new Log({message: "*Jargon* *Jargon* Fun fact: In Star Trek scripts, they just wrote 'Jargon' and they got really good at making stuff up.  Pixel cost reduced to power " + Generators["pixel"].costPower + "." });
+        new Log({message: "*Jargon* *Jargon* Fun fact: In Star Trek scripts, they just wrote 'Jargon' and they got really good at making stuff up.  Pixel cost reduced to power " + Pixpls.Generators.list["pixel"].costPower + "." });
         if (Pixpls.Generators.list["pixel"].costPower <= 2) {
           Pixpls.Mods.purchaseMod(this);
         }
@@ -186,7 +189,7 @@ Pixpls.Data = {
       name: "Click Preparation II",
       label: "ClickChef2",
       description: "Your chef is obviously overworked.  Maybe you should hire someone to assist him.",
-      makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 6 && Mods.purchased("ClickChef"); },
+      makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 6 && Pixpls.Mods.purchased("ClickChef"); },
       affordable: function() {return Pixpls.Generators.list["click"].num >= 100 && Pixpls.Generators.list["pixel"].num >= 1; },
       buy: function() {
         Pixpls.Generators.list["click"].num -= 100;
@@ -205,7 +208,7 @@ Pixpls.Data = {
       name: "Click Preparation III",
       label: "ClickChef3",
       description: "Just two can't provide for all your Pixpls!  You better hire something to prepare the clicks for your chef staff.",
-      makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 10 && Mods.purchased("ClickChef2"); },
+      makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 10 && Pixpls.Mods.purchased("ClickChef2"); },
       affordable: function() {return Pixpls.Generators.list["click"].num >= 1000 && Pixpls.Generators.list["pixel"].num >= 1; },
       buy: function() {
         Pixpls.Generators.list["click"].num -= 1000;
@@ -224,7 +227,7 @@ Pixpls.Data = {
       name: "Pixel Farming",
       label: "PixelFarm",
       description: "The chefs aren't keeping up.  Maybe another approach.  Can the pixels make their own food?",
-      makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 20 && Mods.purchased("ClickChef2"); },
+      makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 20 && Pixpls.Mods.purchased("ClickChef2"); },
       affordable: function() {return Pixpls.Generators.list["click"].num >= 1000 && Pixpls.Generators.list["pixel"].num >= 1; },
       buy: function() {
         Pixpls.Generators.list["click"].num -= 1000;
