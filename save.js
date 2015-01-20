@@ -21,12 +21,19 @@ Pixpls.load = function() {
     new Generator(g[key]).init();
   }
 
-  console.log()
   // Generators.load();
   // Mods.load();
   //Logs.load();
 }
 
 Pixpls.reset = function() {
+  Pixpls.numTicks = 0;
+
+  // I don't think I need these three comments, but I'll leave them in case I need to remember them.
+  // This is currently causing problems, because we haven't implemented reset stuff for the mods...
+  // $("#generators").find("li").remove();
+  // $("#generators").find("article").remove();
+  // Pixpls.Generators.list = {};
+  Pixpls.init();
 
 }
