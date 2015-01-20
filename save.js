@@ -1,13 +1,8 @@
 Pixpls.save = function() {
-  // localstorage for basic Pixpls stuff.
-  if (localStorage) {
-    console.log ("Success!");
-  }
-
   localStorage["ver"] = Pixpls.ver;
   localStorage["numTicks"] = Pixpls.numTicks;
 
-  Pixpls.Generators.save();
+  localStorage["generators"] = JSON.stringify(Pixpls.Generators.list);
   // Mods.save();
   // Logs.save(); // No need to save logs, I think.
 }
@@ -18,6 +13,11 @@ Pixpls.load = function() {
   Pixpls.ver = localStorage["ver"];
   Pixpls.numTicks = localStorage["numTicks"];
 
+  var g = JSON.parse(localStorage["generators"]);
+  Pixpls.Generators.list = {};
+  for (key in g) {
+    new Generator(g[key]);
+  }
   // Generators.load();
   // Mods.load();
   //Logs.load();

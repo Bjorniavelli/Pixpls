@@ -1,38 +1,25 @@
 Pixpls.Generators = {
   list: {},
   init: function() {
-    var section = $("<section />"); // I don't think we need to add a class, because we'll set it as a this.
+    var section = $("<section id=\"generators\" />"); // I don't think we need to add a class, because we'll set it as a this.
     var menu = $("<menu />");
-    var article = $("<article />");
-
-    for (key in Pixpls.Generators.list) {
-      var generator = Pixpls.Generators.list[key];
-      generator.init();
-      menu.append(generator.li);
-      if (key != "click") {
-        generator.li.hide();
-      }
-    }
-
     section.append(menu);
-    section.append(article);
 
     this.section = section;
     this.menu = menu;
-    this.article = article;
 
     $("section").replaceWith(this.section);
+
+    for (key in Pixpls.Generators.list) {
+      Pixpls.Generators.list[key].init();
+      $("." + key).hide();
+    }
   },
   update: function() {
     for (key in this.list) {
       this.list[key].update();
     }
   },
-  save: function() {
-    for (key in this.list) {
-      var s = this.list[key].createSaveObject();
-    }
-  }
 }
 
 function Generator (params) {
@@ -41,6 +28,7 @@ function Generator (params) {
   this.costRatio = params.costRatio;
 
   // Descriptions
+  this.key = params.key;
   this.name = params.name;
   this.label = params.label;
   this.flavorText = params.flavorText;
@@ -57,43 +45,51 @@ function Generator (params) {
   this.buyAmount = 1;
   this.numLost = 0;
 
-  // Mods
-  this.createDisplayMod(); // Move this to init?
+  this.visible = false;
 
   Pixpls.Generators.list[params.key] = this;
 };
 
 Object.defineProperty(Generator.prototype, "article", {
   get: function() {
-    var article = $("<article />");
-    article.addClass(this.key);
-    var name = this.name ? this.name : "There's nothing here!";
-    var flavorText = this.flavorText ? this.flavorText : this.name;
-    article.append("<h2>" + name + "</h2>");
-    article.append("<em>" + flavorText + "</em>");
-
-    // These ones need some 'ifs'.  In fact, all of these should just be if they're defined.
-    article.append ("<p class=\"numLost\"></p>"); // This needs to be added or removed dynamically... But can I do it without rebuilding the whole article?
-    article.append ("<p class=\"generatorCost\"></p>");
-
-    return article;
+    return $("#generators>." + this.key);
   }
-  // I might want to add a configurable: true here, so I can change how the output looks at a later date.
 });
 Object.defineProperty(Generator.prototype, "li", {
   get: function() {
-    var t = this;
-    var li = $("<li />");
-
-    li.addClass(key);
-    li.html("<a href=\"\">" + this.name + "</a>: <var>" + toFixed(this.num, 2) + "</var>");
-    li.append("<button>" + this.message + "</button>");
-    li.on("click", "a", function(e) { e.preventDefault(); t.select(); });
-    li.on("click", "button", function() { t.buy(); });
-
-    return li;
+    return $("#generators>menu>." + this.key);
   }
 });
+Generator.prototype.createArticle = function() {
+  var article = $("<article />");
+  article.addClass(this.key);
+  var name = this.name ? this.name : "There's nothing here!";
+  var flavorText = this.flavorText ? this.flavorText : this.name;
+  article.append("<h2>" + name + "</h2>");
+  article.append("<em>" + flavorText + "</em>");
+
+  // These ones need some 'ifs'.  In fact, all of these should just be if they're defined.
+  article.append ("<p class=\"numLost\"></p>"); // This needs to be added or removed dynamically... But can I do it without rebuilding the whole article?
+  article.append ("<p class=\"generatorCost\"></p>");
+
+  $("#generators").append(article);
+  // Fix this later... >_>
+  //Pixpls.Generators.section.append(article);
+}
+Generator.prototype.createLi = function() {
+  var t = this;
+  var li = $("<li />");
+
+  li.addClass(key);
+  li.html("<a href=\"\">" + this.name + "</a>: <var>" + toFixed(this.num, 2) + "</var>");
+  li.append("<button>" + this.message + "</button>");
+  li.on("click", "a", function(e) { e.preventDefault(); t.select(); });
+  li.on("click", "button", function() { t.buy(); });
+
+  $("#generators>menu").append(li);
+  // Fix this later... >_>
+  // Pixpls.Generators.menu.append(li);
+}
 
 Object.defineProperty(Generator.prototype, "cost", {
   get: function() {
@@ -121,25 +117,26 @@ Object.defineProperty(Generator.prototype, "produce", {
 Generator.prototype.createDisplayMod = function() {
   var t = this;
 
-//  if (this.label != "CGen") { $(document).ready(function() {
-  if (this.label != "CGen") {
-    Pixpls.Mods.hiddenMods.push (new Mod({
-      hidden: true,
-      name: "Show " + t.name + " Generator",
-      label: "Show" + t.label + "Gen",
-      description: "Display an entry in the generators menu for " + t.name + ".",
-      makeAvailable: function() {
+  Pixpls.Mods.hiddenMods.push (new Mod({
+    hidden: true,
+    name: "Show " + t.name + " Generator",
+    label: "Show" + t.label + "Gen",
+    description: "Display an entry in the generators menu for " + t.name + ".",
+    makeAvailable: function() {
+      if (t.key === "click") {
+        return true;
+      } else {
         return t.produceTarget.num >= 5;
-      },
-      buy: function() {
-        t.li.show();
       }
-    }));
-  }
-//  }); }
+    },
+    buy: function() {
+      t.li.show();
+    }
+  }));
 }
 Generator.prototype.select = function() {
-  $("article").replaceWith(this.article);
+  $("#generators>article").hide();
+  this.article.show();
 };
 Generator.prototype.buy = function() {
   if (!this.costTarget) {
@@ -154,6 +151,9 @@ Generator.prototype.buy = function() {
   }
 };
 Generator.prototype.init = function() {
+  this.createDisplayMod(); // Move this to init?
+  this.createArticle();
+  this.createLi();
 };
 Generator.prototype.update = function() {
   $("menu ." + key + " var").html(toFixed(Pixpls.Generators.list[key].num, 2)); // This 'key' is going to cause problems later...

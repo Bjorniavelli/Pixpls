@@ -2,7 +2,7 @@ Pixpls.Data = {
   init: function() {
     // Generators Init
     for (key in this.Generators) {
-      Pixpls.Generators.list[key] = new Generator(this.Generators[key]);
+      new Generator(this.Generators[key]);
     }
 
     // Mods Init
