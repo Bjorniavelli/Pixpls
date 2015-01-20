@@ -17,9 +17,6 @@ var Pixpls = {
     Pixpls.Generators.init();
     Pixpls.Mods.render();
 
-    console.log(Pixpls.Generators.list["click"]);
-    console.log(JSON.stringify(Pixpls.Generators.list["click"]));
-
     $("header").on("click", "#savebutton", Pixpls.save);
     $("header").on("click", "#loadbutton", Pixpls.load);
     $("header").on("click", "#resetbutton", Pixpls.reset);

@@ -14,10 +14,14 @@ Pixpls.load = function() {
   Pixpls.numTicks = localStorage["numTicks"];
 
   var g = JSON.parse(localStorage["generators"]);
+  $("#generators").find("li").remove();
+  $("#generators").find("article").remove();
   Pixpls.Generators.list = {};
   for (key in g) {
-    new Generator(g[key]);
+    new Generator(g[key]).init();
   }
+
+  console.log()
   // Generators.load();
   // Mods.load();
   //Logs.load();

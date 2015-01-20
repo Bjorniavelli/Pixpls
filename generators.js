@@ -12,7 +12,6 @@ Pixpls.Generators = {
 
     for (key in Pixpls.Generators.list) {
       Pixpls.Generators.list[key].init();
-      $("." + key).hide();
     }
   },
   update: function() {
@@ -23,8 +22,8 @@ Pixpls.Generators = {
 }
 
 function Generator (params) {
-  this._produceTarget = params.produceTarget;
-  this._costTarget = params.costTarget;
+  this._produceTarget = params._produceTarget;
+  this._costTarget = params._costTarget;
   this.costRatio = params.costRatio;
 
   // Descriptions
@@ -34,18 +33,16 @@ function Generator (params) {
   this.flavorText = params.flavorText;
 
   // Logic
-  this.baseCost = params.cost || 1;
-  this.baseProduce = params.produce || 0;
+  this.baseCost = params.baseCost || 1;
+  this.baseProduce = params.baseProduce || 0;
 
   // Optional
   this.num = params.num || 0;
   this.message = params.message || "Buy!";
 
   // Fixed
-  this.buyAmount = 1;
-  this.numLost = 0;
-
-  this.visible = false;
+  this.buyAmount = params.buyAmout || 1;
+  this.numLost = params.numLost || 0;
 
   Pixpls.Generators.list[params.key] = this;
 };
@@ -73,6 +70,7 @@ Generator.prototype.createArticle = function() {
   article.append ("<p class=\"generatorCost\"></p>");
 
   $("#generators").append(article);
+  article.hide();
   // Fix this later... >_>
   //Pixpls.Generators.section.append(article);
 }
@@ -87,6 +85,7 @@ Generator.prototype.createLi = function() {
   li.on("click", "button", function() { t.buy(); });
 
   $("#generators>menu").append(li);
+  li.hide();
   // Fix this later... >_>
   // Pixpls.Generators.menu.append(li);
 }
@@ -144,6 +143,8 @@ Generator.prototype.buy = function() {
     return;
   }
 
+  console.log (this.key + " === " + Pixpls.Generators.list[this.key].key + " -> " + (this === Pixpls.Generators.list[this.key]));
+
   if (this.costTarget.num >= this.cost) {
     this.costTarget.num -= this.cost;
     this.num += this.buyAmount;
@@ -151,7 +152,7 @@ Generator.prototype.buy = function() {
   }
 };
 Generator.prototype.init = function() {
-  this.createDisplayMod(); // Move this to init?
+  this.createDisplayMod(); // This is going to cause us problems later... because it's creating extra hidden mods...
   this.createArticle();
   this.createLi();
 };

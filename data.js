@@ -30,15 +30,15 @@ Pixpls.Data = {
       message: "Click!",
       enabled: true,
       flavorText: "Strangely, they give off an appetizing aroma: Ozone and Umamclicki.",
-      cost: 0
+      baseCost: 0
     },
     pixel: {
       key: "pixel",
       name: "Pixel",
       label: "PGen",
-      produceTarget: "click",
-      costTarget: "click",
-      produce: -1,
+      _produceTarget: "click",
+      _costTarget: "click",
+      baseProduce: -1,
       flavorText: "Little dots that shine?  Fantastic!"
     },
     renderer: {
@@ -46,57 +46,57 @@ Pixpls.Data = {
       name: "Renderer",
       label: "RGen",
       num: 0,
-      produceTarget: "pixel",
-      costTarget: "pixel",
-      produce: 1
+      _produceTarget: "pixel",
+      _costTarget: "pixel",
+      baseProduce: 1
     },
     extruder: {
       key: "extruder",
       name: "Extruder",
       label: "EGen",
-      produceTarget: "renderer",
-      costTarget: "renderer",
-      produce: 1
+      _produceTarget: "renderer",
+      _costTarget: "renderer",
+      baseProduce: 1
     },
     electronicskit: {
       key: "electronicskit",
       name: "Electronics Kit",
       label: "EKGen",
-      produceTarget: "extruder",
-      costTarget: "extruder",
-      produce: 1
+      _produceTarget: "extruder",
+      _costTarget: "extruder",
+      baseProduce: 1
     },
     factory: {
       key: "factory",
       name: "Factory",
       label: "FGen",
-      produceTarget: "electronicskit",
-      costTarget: "electronicskit",
-      produce: 1
+      _produceTarget: "electronicskit",
+      _costTarget: "electronicskit",
+      baseProduce: 1
     },
     cementprinter: {
       key: "cementprinter",
       name: "Cement Printer",
       label: "CPGen",
-      produceTarget: "factory",
-      costTarget: "factory",
-      produce: 1
+      _produceTarget: "factory",
+      _costTarget: "factory",
+      baseProduce: 1
     },
     designlab: {
       key: "designlab",
       name: "Design Lab",
       label: "DLGen",
-      produceTarget: "cementprinter",
-      costTarget: "cementprinter",
-      produce: 1
+      _produceTarget: "cementprinter",
+      _costTarget: "cementprinter",
+      baseProduce: 1
     },
     ai: {
       key: "ai",
       name: "AI",
       label: "AIGen",
-      produceTarget: "designlab",
-      costTarget: "designlab",
-      produce: 1
+      _produceTarget: "designlab",
+      _costTarget: "designlab",
+      baseProduce: 1
     }
   },
 
