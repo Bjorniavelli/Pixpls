@@ -1,64 +1,3 @@
-function Mod (params) {
-  this.name = params.name || "";
-  this.label = params.label || "";
-  this.description = params.description || "";
-  this.hidden = params.hidden || false;
-
-  var t = this;
-  this.makeAvailable = params.makeAvailable || function() { return false; };
-  this.affordable = params.affordable || function() { return true; };
-  this.buy = params.buy || function() { new Log({message: "Bought " + t.name + "."}); };
-
-  if (this.hidden != true) {
-    this.div = $("<div />");
-    this.div.addClass(this.label);
-    this.div.addClass("mod");
-    this.buttonSpan = $("<span />");
-    this.buttonSpan.addClass("buttonSpan");
-    this.button = $("<button />");
-    this.button.html("Buy!");
-    this.notButton = $("<s />");
-    this.notButton.html("Buy");
-
-    this.render();
-  }
-
-  if (this.hidden) {
-    Pixpls.Mods.hiddenMods.push(this);
-  } else {
-    Pixpls.Mods.unavailableMods.push(this);
-  }
-};
-Mod.prototype.update = function() {
-  if ( this.affordable()) {
-    this.notButton.css({display: "none"});
-    this.button.css({display: "block"});
-    //this.notButton.hide();
-    //this.button.show();
-  }
-  if ( !this.affordable()) {
-    this.notButton.css({display: "inline"});
-    this.button.css({display: "none"});
-    // this.notButton.show(); // Show and hide keep freaking out... but why?
-    // this.button.hide();
-  }
-};
-Mod.prototype.render = function() {
-  this.div.html("<p class=\"name\">" + this.name + "</p>");
-  this.div.append("<p class=\"description\">" + this.description + "</p>");
-  this.div.append(this.buttonSpan);
-
-  this.buttonSpan.append(this.button);
-  this.buttonSpan.append(this.notButton);
-
-  if (this.buy) {
-    var t = this;
-    this.buttonSpan.on( "click", "button", function() { t.buy(); t.render(); } );
-  }
-
-  this.update();
-};
-
 Pixpls.Mods = {
   update: function() {
     for (var i = 0; i < this.unavailableMods.length; i++) {
@@ -81,34 +20,42 @@ Pixpls.Mods = {
     }
 
     if (this.availableMods.length == 0) {
-      this.divAvailable.hide();
+      $(".available").hide();
     } else {
-      this.divAvailable.show();
+      $(".available").show();
     }
 
     if (this.purchasedMods.length == 0) {
-      this.divPurchased.hide();
+      $(".purchased").hide();
     } else {
-      this.divPurchased.show();
+      $(".purchased").show();
     }
   },
   render: function() {
-    this.div = $("<div />"); // Should I just define this as div: $("<div class="mods" />"); ?
-    this.div.addClass("mods");
+    var div = $(".mods"); // Should I just define this as div: $("<div class="mods" />"); ?
+//    div.empty();
 
-    this.divAvailable = $("<div />");
-    this.divAvailable.addClass("available");
-    this.divAvailable.append("<h4>Available</h4>");
+    // var divUnavailable = $("<div />");
+    // divUnavailable.addClass("unavailable");
+    // divUnavailable.append("<h4>Undisplayed Mods</h4>");
+    // divUnavailable.hide();
+    $(".unavailable").hide();
 
-    this.divPurchased = $("<div />");
-    this.divPurchased.addClass("purchased");
-    this.divPurchased.append("<h4>Purchased</h4>");
+    // var divAvailable = $("<div />");
+    // divAvailable.addClass("available");
+    // divAvailable.append("<h4>Available</h4>");
+    $(".available").hide();
 
-    this.div.append(this.divAvailable);
-    this.div.append(this.divPurchased);
+    // var divPurchased = $("<div />");
+    // divPurchased.addClass("purchased");
+    // divPurchased.append("<h4>Purchased</h4>");
+    $(".purchased").hide();
 
-    $(".mods").replaceWith(this.div);
-    $(".mods").hide();
+    // div.append(divUnavailable);
+    // div.append(divAvailable);
+    // div.append(divPurchased);
+
+    div.hide();
   },
 
   displayMod: function(mod) {
@@ -127,8 +74,8 @@ Pixpls.Mods = {
     this.unavailableMods.splice(index, 1);
     this.availableMods.push(mod);
 
-    mod.render();
-    this.divAvailable.append(mod.div);
+    //mod.div.detach();
+    $(".available").append(mod.div);
   },
   purchaseMod: function(mod) {
     var index;
@@ -146,9 +93,9 @@ Pixpls.Mods = {
     this.availableMods.splice(index, 1);
     this.purchasedMods.push(mod);
 
-    mod.div.detach();
-    mod.buttonSpan.hide();
-    this.divPurchased.append(mod.div);
+    //mod.div.detach();
+    mod.buttonSpan.remove();
+    $(".purchased").append(mod.div);
   },
 
   purchased: function(modLabel) {
@@ -165,4 +112,80 @@ Pixpls.Mods = {
   availableMods: [],
   purchasedMods: [],
   hiddenMods: []
-}
+};
+
+function Mod (params) {
+  this.name = params.name || "";
+  this.label = params.label || "";
+  this.description = params.description || "";
+  this.flavorText = params.flavorText || "";
+  this.message = params.message || "Buy";
+  this.hidden = params.hidden || false;
+
+  var t = this;
+  this.makeAvailable = params.makeAvailable || function() { return false; };
+  this.affordable = params.affordable || function() { return true; };
+  this.buy = params.buy || function() { new Log({message: "Bought " + t.name + "."}); };
+
+  if (this.hidden != true) {
+    Pixpls.Mods.unavailableMods.push(this);
+    this.render();
+  } else {
+    Pixpls.Mods.hiddenMods.push(this);
+  }
+};
+Mod.prototype.update = function() {
+  if ( this.affordable()) {
+    this.notButton.css({display: "none"});
+    this.button.css({display: "block"});
+    //this.notButton.hide();
+    //this.button.show();
+  }
+  if ( !this.affordable()) {
+    this.notButton.css({display: "inline"});
+    this.button.css({display: "none"});
+    // this.notButton.show(); // Show and hide keep freaking out... but why?
+    // this.button.hide();
+  }
+};
+Mod.prototype.render = function() {
+  var div = $("<div />");
+  div.addClass(this.label);
+  div.addClass("mod");
+
+  div.html("<p class=\"name\">" + this.name + "</p>");
+  div.append("<p class=\"description\">" + this.description + "</p>");
+
+  var buttonSpan = $("<span />");
+  buttonSpan.addClass("buttonSpan");
+  div.append(buttonSpan);
+
+  var button = $("<button />");
+  button.html(this.message + "!");
+  var notButton = $("<s />");
+  notButton.html(this.message);
+
+  buttonSpan.append(button);
+  buttonSpan.append(notButton);
+
+  if (this.buy) {
+    var t = this;
+    buttonSpan.on( "click", "button", function() { t.buy(); } );
+  }
+
+  $(".unavailable").append(div);
+  this.update();
+};
+// These aren't seeming to work properly.  Fix 'em next!
+Object.defineProperty(Mod.prototype, "div", {
+  get: function() { return $("." + this.label); }
+});
+Object.defineProperty(Mod.prototype, "buttonSpan", {
+  get: function() { return this.div.find("span"); }
+});
+Object.defineProperty(Mod.prototype, "button", {
+  get: function() { return this.buttonSpan.find("button"); }
+});
+Object.defineProperty(Mod.prototype, "notButton", {
+  get: function() { return this.buttonSpan.find("s"); }
+});
