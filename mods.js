@@ -1,97 +1,98 @@
 Pixpls.Mods = {
   update: function() {
-    for (var i = 0; i < this.unavailableMods.length; i++) {
-      if (this.unavailableMods[i].makeAvailable()) {
-        this.displayMod(this.unavailableMods[i]);
+    for (key in this.unavailableMods) {
+      if (this.unavailableMods[key].makeAvailable()) {
+        this.displayMod(this.unavailableMods[key]);
       }
     }
 
-    for (var i = 0; i < this.availableMods.length; i++) {
-      this.availableMods[i].update();
+    for (key in this.availableMods) {
+      this.availableMods[key].update();
     }
 
-    for (var i = 0; i < this.hiddenMods.length; i++) {
-      if (this.hiddenMods[i].makeAvailable()) {
-        this.hiddenMods[i].buy();
-        var d = this.hiddenMods[i];
-        this.hiddenMods.splice(i, 1);
-        delete d;
+    for (key in this.hiddenMods) {
+      if (this.hiddenMods[key].makeAvailable()) {
+        this.hiddenMods[key].buy();
+        delete this.hiddenMods[key];
+        // var d = this.hiddenMods[i];
+        // this.hiddenMods.splice(i, 1);
+        // delete d;
       }
     }
 
-    if (this.availableMods.length == 0) {
+    if (this.availableMods === {}) {
       $(".available").hide();
     } else {
       $(".available").show();
     }
 
-    if (this.purchasedMods.length == 0) {
+    if (this.purchasedMods === {}) {
       $(".purchased").hide();
     } else {
       $(".purchased").show();
     }
   },
-  render: function() {
+  init: function() {
     var div = $(".mods"); // Should I just define this as div: $("<div class="mods" />"); ?
-//    div.empty();
-
-    // var divUnavailable = $("<div />");
-    // divUnavailable.addClass("unavailable");
-    // divUnavailable.append("<h4>Undisplayed Mods</h4>");
-    // divUnavailable.hide();
+    $(".unavailable").html("<h4>Unavailable Mods - Shouldn't ever display</h4>");
     $(".unavailable").hide();
-
-    // var divAvailable = $("<div />");
-    // divAvailable.addClass("available");
-    // divAvailable.append("<h4>Available</h4>");
+    $(".available").html("<h4>Available</h4>");
     $(".available").hide();
-
-    // var divPurchased = $("<div />");
-    // divPurchased.addClass("purchased");
-    // divPurchased.append("<h4>Purchased</h4>");
+    $(".purchased").html("<h4>Purchased</h4>");
     $(".purchased").hide();
-
-    // div.append(divUnavailable);
-    // div.append(divAvailable);
-    // div.append(divPurchased);
-
     div.hide();
   },
 
   displayMod: function(mod) {
-    var index;
-    for (index = 0; index < this.unavailableMods.length; index++) {
-      if (mod.label == this.unavailableMods[index].label) {
-        break;
-      }
-    }
-
-    if (index < 0 || index > this.unavailableMods.length) {
+    if (!this.unavailableMods[mod.label]) {
       console.log ("We have a problem.  " + mod.name + " is trying to display, but is not in unavailableMods.");
       return;
     }
 
-    this.unavailableMods.splice(index, 1);
-    this.availableMods.push(mod);
+    this.availableMods[mod.label] = this.unavailableMods[mod.label];
+    delete this.unavailableMods[mod.label];
+
+    // var index;
+    // for (index = 0; index < this.unavailableMods.length; index++) {
+    //   if (mod.label == this.unavailableMods[index].label) {
+    //     break;
+    //   }
+    // }
+    //
+    // if (index < 0 || index > this.unavailableMods.length) {
+    //   console.log ("We have a problem.  " + mod.name + " is trying to display, but is not in unavailableMods.");
+    //   return;
+    // }
+    //
+    // this.unavailableMods.splice(index, 1);
+    // this.availableMods.push(mod);
 
     //mod.div.detach();
     $(".available").append(mod.div);
   },
   purchaseMod: function(mod) {
-    var index;
-    for (index = 0; index < this.availableMods.length; index++) {
-      if (mod.label == this.availableMods[index].label) {
-        break;
-      }
-    }
-
-    if (index < 0 || index >= this.availableMods.length) {
+    if (!this.availableMods[mod.label]) {
       console.log ("We have a problem.  " + mod.name + " is trying to purchase, but is not in availableMods.");
       return;
     }
 
-    this.availableMods.splice(index, 1);
-    this.purchasedMods.push(mod);
+    this.purchasedMods[mod.label] = this.availableMods[mod.label];
+    delete this.availableMods[mod.label];
+
+    // var index;
+    // for (index = 0; index < this.availableMods.length; index++) {
+    //   if (mod.label == this.availableMods[index].label) {
+    //     break;
+    //   }
+    // }
+    //
+    // if (index < 0 || index >= this.availableMods.length) {
+    //   console.log ("We have a problem.  " + mod.name + " is trying to purchase, but is not in availableMods.");
+    //   return;
+    // }
+    //
+    // this.availableMods.splice(index, 1);
+    // this.purchasedMods.push(mod);
 
     //mod.div.detach();
     mod.buttonSpan.remove();
@@ -99,19 +100,22 @@ Pixpls.Mods = {
   },
 
   purchased: function(modLabel) {
-    for (var i = 0; i < this.purchasedMods.length; i++) {
-      if (this.purchasedMods[i].label == modLabel) {
-        return true;
-      }
+    if (this.purchasedMods[modLabel]) {
+      return true;
     }
+    // for (var i = 0; i < this.purchasedMods.length; i++) {
+    //   if (this.purchasedMods[i].label == modLabel) {
+    //     return true;
+    //   }
+    // }
 
     return false;
   },
 
-  unavailableMods: [],
-  availableMods: [],
-  purchasedMods: [],
-  hiddenMods: []
+  unavailableMods: {},
+  availableMods: {},
+  purchasedMods: {},
+  hiddenMods: {}
 };
 
 function Mod (params) {
@@ -128,10 +132,10 @@ function Mod (params) {
   this.buy = params.buy || function() { new Log({message: "Bought " + t.name + "."}); };
 
   if (this.hidden != true) {
-    Pixpls.Mods.unavailableMods.push(this);
+    Pixpls.Mods.unavailableMods[this.label] = this;
     this.render();
   } else {
-    Pixpls.Mods.hiddenMods.push(this);
+    Pixpls.Mods.hiddenMods[this.label] = this;
   }
 };
 Mod.prototype.update = function() {

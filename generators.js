@@ -9,10 +9,6 @@ Pixpls.Generators = {
     this.menu = menu;
 
     $("section").replaceWith(this.section);
-
-    for (key in Pixpls.Generators.list) {
-      Pixpls.Generators.list[key].init();
-    }
   },
   update: function() {
     for (key in this.list) {
@@ -44,6 +40,7 @@ function Generator (params) {
   this.buyAmount = params.buyAmout || 1;
   this.numLost = params.numLost || 0;
 
+  this.init();
   Pixpls.Generators.list[params.key] = this;
 };
 
@@ -116,7 +113,7 @@ Object.defineProperty(Generator.prototype, "produce", {
 Generator.prototype.createDisplayMod = function() {
   var t = this;
 
-  Pixpls.Mods.hiddenMods.push (new Mod({
+  new Mod({
     hidden: true,
     name: "Show " + t.name + " Generator",
     label: "Show" + t.label + "Gen",
@@ -131,7 +128,7 @@ Generator.prototype.createDisplayMod = function() {
     buy: function() {
       t.li.show();
     }
-  }));
+  });
 }
 Generator.prototype.select = function() {
   $("#generators>article").hide();
@@ -142,8 +139,6 @@ Generator.prototype.buy = function() {
     this.num += this.buyAmount;
     return;
   }
-
-  console.log (this.key + " === " + Pixpls.Generators.list[this.key].key + " -> " + (this === Pixpls.Generators.list[this.key]));
 
   if (this.costTarget.num >= this.cost) {
     this.costTarget.num -= this.cost;

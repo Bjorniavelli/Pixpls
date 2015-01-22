@@ -1,13 +1,14 @@
 Pixpls.Data = {
   init: function() {
     // Generators Init
+
     for (key in this.Generators) {
       new Generator(this.Generators[key]);
     }
 
     // Mods Init
-    for (var i = 0; i < this.Mods.length; i++) {
-      new Mod(this.Mods[i]);
+    for (key in this.Mods) {
+      new Mod(this.Mods[key]);
     }
     // for (var i = 0; i < this.HiddenMods.length; i++) {
     //   Pixpls.Mods.hiddenMods.push(new Mod(this.HiddenMods[i]));
@@ -100,8 +101,8 @@ Pixpls.Data = {
     }
   },
 
-  Mods: [
-    {
+  Mods: {
+    UselessUpgrade: {
       name: "Test Upgrade",
       label: "UselessUpgrade",
       description: "Just checking to see if the upgrade display is working.",
@@ -112,7 +113,7 @@ Pixpls.Data = {
         new Log({message: "Bought a useless upgrade!  Go you!"});
       }
     },
-    {
+    DebugClicks: {
       name: "Check Clicks",
       label: "DebugClicks",
       description: "Add 10,000,000 clicks.",
@@ -122,7 +123,7 @@ Pixpls.Data = {
         Pixpls.Generators.list["click"].num += 10000000;
       }
     },
-    {
+    DebugPixels: {
       name: "Check Pixels",
       label: "DebugPixels",
       description: "Add 1,000 pixels.",
@@ -132,7 +133,7 @@ Pixpls.Data = {
         Pixpls.Generators.list["pixel"].num += 1000;
       }
     },
-    {
+    RedGluttony: {
       name: "Reduce Gluttony",
       label: "RedGluttony",
       description: "Those pixels seem to be eating an inordinate amount.  Maybe you're clicking wrong?  This will train you.",
@@ -150,7 +151,7 @@ Pixpls.Data = {
         Pixpls.Mods.purchaseMod(this);
       }
     },
-    {
+    RedGluttony2: {
       name: "Further Reduce Gluttony",
       label: "RedGluttony2",
       description: "Well, that didn't work... Turns out some of your pixels just got hungrier.  Maybe we should cull the hungry ones?",
@@ -166,7 +167,7 @@ Pixpls.Data = {
         }
       }
     },
-    {
+    ClickChef: {
       name: "Click Preparation",
       label: "ClickChef",
       description: "Clicks are eating too much!  You're starving!  But maybe if you hired a chef, you'd be able to reduce your raw click consumption.",
@@ -185,7 +186,7 @@ Pixpls.Data = {
         Pixpls.Mods.purchaseMod(this);
       }
     },
-    {
+    ClickChef2: {
       name: "Click Preparation II",
       label: "ClickChef2",
       description: "Your chef is obviously overworked.  Maybe you should hire someone to assist him.",
@@ -204,7 +205,7 @@ Pixpls.Data = {
         Pixpls.Mods.purchaseMod(this);
       }
     },
-    { //B7UmUX68KtE
+    ClickChef3: { //B7UmUX68KtE
       name: "Click Preparation III",
       label: "ClickChef3",
       description: "Just two can't provide for all your Pixpls!  You better hire something to prepare the clicks for your chef staff.",
@@ -223,7 +224,7 @@ Pixpls.Data = {
         Pixpls.Mods.purchaseMod(this);
       }
     },
-    {
+    PixelFarm: {
       name: "Pixel Farming",
       label: "PixelFarm",
       description: "The chefs aren't keeping up.  Maybe another approach.  Can the pixels make their own food?",
@@ -244,7 +245,7 @@ Pixpls.Data = {
     },
 
     //Hidden Mods
-    {
+    ShowGenerator: {
       hidden: true,
       name: "Show Generator Menu",
       label: "ShowGenerator",
@@ -254,13 +255,13 @@ Pixpls.Data = {
         $("#generators").show();
       }
     },
-    {
+    ShowMods: {
       hidden: true,
       name: "Show Mods",
       label: "ShowMods",
       descripton: "This wil make the mods available when there are some.",
       makeAvailable: function() {
-        return Pixpls.Mods.availableMods.length > 0 &&
+        return Pixpls.Mods.availableMods !== {} &&
                 Pixpls.numTicks >= 20 &&
                 $("#generators:visible");
       },
@@ -268,5 +269,5 @@ Pixpls.Data = {
         $(".mods").show();
       }
     }
-  ]
+  }
 }

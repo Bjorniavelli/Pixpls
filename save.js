@@ -5,12 +5,26 @@ Pixpls.save = function() {
 
   localStorage["generators"] = JSON.stringify(Pixpls.Generators.list);
 
-  localStorage["mods"] = JSON.stringify({
-    unavailableMods: Pixpls.Mods.unavailableMods,
-    availableMods: Pixpls.Mods.availableMods,
-    purchasedMods: Pixpls.Mods.purchasedMods,
-    hiddenMods: Pixpls.Mods.hiddenMods
-  });
+  var m = {
+    unavailableMods: {},
+    availableMods: {},
+    purchasedMods: {},
+    hiddenMods: {}
+  };
+  for (key in Pixpls.Mods.unavailableMods) {
+    m.unavailableMods[key] = key;
+  }
+  for (key in Pixpls.Mods.availableMods) {
+    m.availableMods[key] = key;
+  }
+  for (key in Pixpls.Mods.purchasedMods) {
+    m.purchasedMods[key] = key;
+  }
+  for (key in Pixpls.Mods.hiddenMods) {
+    m.hiddenMods[key] = key;
+  }
+
+  localStorage["mods"] = JSON.stringify(m);
   // Logs.save(); // No need to save logs, I think.
 }
 
@@ -23,8 +37,9 @@ Pixpls.load = function() {
   Pixpls.numTicks = localStorage["numTicks"];
 
   var g = JSON.parse(localStorage["generators"]);
-  $("#generators").find("li").remove();
-  $("#generators").find("article").remove();
+  $("#generators").html("<menu></menu><article></article>");
+  // $("#generators").find("li").remove();
+  // $("#generators").find("article").remove();
   Pixpls.Generators.list = {};
   for (key in g) {
     new Generator(g[key]).init();
@@ -32,10 +47,27 @@ Pixpls.load = function() {
 
   var m = JSON.parse(localStorage["mods"]);
   $(".mod").remove();
-  Pixpls.Mods.unavailableMods = m.unavailableMods;
-  Pixpls.Mods.availableMods = m.availableMods;
-  Pixpls.Mods.purchasedMods = m.purchasedMods;
-  Pixpls.Mods.hiddenMods = m.hiddenMods;
+  Pixpls.Mods.unavailableMods = {};
+  for (key in m.unavailableMods) {
+    new Mod(Pixpls.Data.Mods[key]);
+  }
+  Pixpls.Mods.availableMods = {};
+  for (key in m.availableMods) {
+    var mod = new Mod(Pixpls.Data.Mods[key]);
+    Pixpls.Mods.displayMod(mod);
+  }
+  Pixpls.purchasedMods = {};
+  for (key in m.purchasedMods) {
+    var mod = new Mod(Pixpls.Data.Mods[key], Pixpls.Mods.purchasedMods);
+    Pixpls.Mods.displayMod(mod);
+    Pixpls.Mods.purchaseMod(mod);
+  }
+  Pixpls.hiddenMods = {};
+  for (key in m.hiddenMods) {
+    if (Pixpls.Data.Mods[key]) {
+      new Mod(Pixpls.Data.Mods[key]);
+    }
+  }
 
   // Generators.load();
   // Mods.load();
@@ -47,9 +79,14 @@ Pixpls.reset = function() {
 
   // I don't think I need these three comments, but I'll leave them in case I need to remember them.
   // This is currently causing problems, because we haven't implemented reset stuff for the mods...
-  // $("#generators").find("li").remove();
-  // $("#generators").find("article").remove();
-  // Pixpls.Generators.list = {};
-  Pixpls.init();
+  $("#generators").find("li").remove();
+  $("#generators").find("article").remove();
+  Pixpls.Generators.list = {};
 
+  Pixpls.Mods.unavailableMods = {};
+  Pixpls.Mods.availableMods = {};
+  Pixpls.Mods.purchasedMods = {};
+  Pixpls.Mods.hiddenMods = {};
+
+  Pixpls.init();
 }

@@ -12,10 +12,10 @@ var Pixpls = {
   devMode: true,
 
   init: function() {
-    Pixpls.Data.init();
-
     Pixpls.Generators.init();
-    Pixpls.Mods.render();
+    Pixpls.Mods.init();
+
+    Pixpls.Data.init();
 
     $("header").on("click", "#savebutton", Pixpls.save);
     $("header").on("click", "#loadbutton", Pixpls.load);
