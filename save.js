@@ -42,7 +42,7 @@ Pixpls.load = function() {
   // $("#generators").find("article").remove();
   Pixpls.Generators.list = {};
   for (key in g) {
-    new Generator(g[key]).init();
+    new Generator(g[key]);
   }
 
   var m = JSON.parse(localStorage["mods"]);
