@@ -9,6 +9,7 @@ Pixpls.Generators = {
     this.menu = menu;
 
     $("section").replaceWith(this.section);
+    // Should we be hiding it in here?
   },
   update: function() {
     for (key in this.list) {

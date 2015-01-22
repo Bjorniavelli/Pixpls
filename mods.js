@@ -13,6 +13,7 @@ Pixpls.Mods = {
     for (key in this.hiddenMods) {
       if (this.hiddenMods[key].makeAvailable()) {
         this.hiddenMods[key].buy();
+        this.hiddenQueue.push(this.hiddenMods[key].label);
         delete this.hiddenMods[key];
         // var d = this.hiddenMods[i];
         // this.hiddenMods.splice(i, 1);
@@ -115,7 +116,8 @@ Pixpls.Mods = {
   unavailableMods: {},
   availableMods: {},
   purchasedMods: {},
-  hiddenMods: {}
+  hiddenMods: {},
+  hiddenQueue: []
 };
 
 function Mod (params) {

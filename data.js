@@ -156,6 +156,7 @@ Pixpls.Data = {
       label: "RedGluttony2",
       description: "Well, that didn't work... Turns out some of your pixels just got hungrier.  Maybe we should cull the hungry ones?",
       makeAvailable: function() { return Pixpls.Mods.purchased("RedGluttony"); },
+      // It's checking if it's affordable, but it's not displaying the buy button on load.
       affordable: function() { return Pixpls.Generators.list["pixel"].num > Math.pow(2, 16 / Pixpls.Generators.list["pixel"].costPower); }, // I think this cost goes up too fast.
       buy: function() {
         Pixpls.Generators.list["pixel"].num /= 2;

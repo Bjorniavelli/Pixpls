@@ -15,7 +15,13 @@ var Pixpls = {
     Pixpls.Generators.init();
     Pixpls.Mods.init();
 
-    Pixpls.Data.init();
+    // This needs to be modified a bit, because the load isn't displaying the Mods div.
+    // It's because the hiddenMod that displays them isn't there any more in the save data.
+    if (localStorage["savedata"] == "true") {
+      Pixpls.load();
+    } else {
+      Pixpls.Data.init();
+    }
 
     $("header").on("click", "#savebutton", Pixpls.save);
     $("header").on("click", "#loadbutton", Pixpls.load);

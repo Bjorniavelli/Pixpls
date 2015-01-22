@@ -6,10 +6,11 @@ Pixpls.save = function() {
   localStorage["generators"] = JSON.stringify(Pixpls.Generators.list);
 
   var m = {
-    unavailableMods: {},
+    unavailableMods: {}, // These might need to be arrays.
     availableMods: {},
     purchasedMods: {},
-    hiddenMods: {}
+    hiddenMods: {},
+    hiddenQueue: Pixpls.Mods.hiddenQueue
   };
   for (key in Pixpls.Mods.unavailableMods) {
     m.unavailableMods[key] = key;
@@ -68,6 +69,14 @@ Pixpls.load = function() {
       new Mod(Pixpls.Data.Mods[key]);
     }
   }
+  for (var i = 0; i < m.hiddenQueue.length; i++) {
+    if (Pixpls.Data.Mods[i]) {
+      Pixpls.Data.Mods[i].buy();
+    }
+  }
+
+  Pixpls.Logs.list = [];
+  new Log({message: "Game loaded!"});
 
   // Generators.load();
   // Mods.load();
@@ -75,10 +84,16 @@ Pixpls.load = function() {
 }
 
 Pixpls.reset = function() {
+  if (!window.confirm("This is an actual reset.  It's not fancy prestige stuff.  You probably don't want to do this.  Continue?")) {
+    new Log({message: "Pixpls Apocalypse Averted!"});
+    return;
+  }
+
+  new Log({message: "Gauss!  Was it worth it?"});
+
+  localStorage["savedata"] = false;
   Pixpls.numTicks = 0;
 
-  // I don't think I need these three comments, but I'll leave them in case I need to remember them.
-  // This is currently causing problems, because we haven't implemented reset stuff for the mods...
   $("#generators").find("li").remove();
   $("#generators").find("article").remove();
   Pixpls.Generators.list = {};
@@ -87,6 +102,10 @@ Pixpls.reset = function() {
   Pixpls.Mods.availableMods = {};
   Pixpls.Mods.purchasedMods = {};
   Pixpls.Mods.hiddenMods = {};
+  Pixpls.Mods.hiddenQueue = [];
+
+  Pixpls.Logs.list = [];
+//  $(".logs").empty();
 
   Pixpls.init();
 }
