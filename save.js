@@ -70,8 +70,8 @@ Pixpls.load = function() {
     }
   }
   for (var i = 0; i < m.hiddenQueue.length; i++) {
-    if (Pixpls.Data.Mods[i]) {
-      Pixpls.Data.Mods[i].buy();
+    if (Pixpls.Data.Mods[m.hiddenQueue[i]]) {
+      Pixpls.Data.Mods[m.hiddenQueue[i]].buy();
     }
   }
 

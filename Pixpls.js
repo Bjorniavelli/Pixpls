@@ -33,6 +33,11 @@ var Pixpls = {
 
     Pixpls.Generators.update();
     Pixpls.Mods.update();
+
+    // This automatically auto-saves... I'm not sure we want that.  But we'll implement it for now.
+    if (Pixpls.numTicks % 100 === 0) {
+      Pixpls.save();
+    }
   }
 };
 $(document).ready(function() {
