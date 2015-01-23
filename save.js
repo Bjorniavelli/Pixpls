@@ -70,10 +70,12 @@ Pixpls.load = function() {
     }
   }
   for (var i = 0; i < m.hiddenQueue.length; i++) {
+    console.log(i);
     if (Pixpls.Data.Mods[m.hiddenQueue[i]]) {
       Pixpls.Data.Mods[m.hiddenQueue[i]].buy();
     }
   }
+  Pixpls.Mods.hiddenQueue = m.hiddenQueue;
 
   Pixpls.Logs.list = [];
   new Log({message: "Game loaded!"});

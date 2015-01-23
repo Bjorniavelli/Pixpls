@@ -49,7 +49,8 @@ Pixpls.Data = {
       num: 0,
       _produceTarget: "pixel",
       _costTarget: "pixel",
-      baseProduce: 1
+      baseProduce: 1,
+      flavorText: "All we have to do is make more pixels?  That doesn't seem so hard."
     },
     extruder: {
       key: "extruder",
@@ -57,7 +58,8 @@ Pixpls.Data = {
       label: "EGen",
       _produceTarget: "renderer",
       _costTarget: "renderer",
-      baseProduce: 1
+      baseProduce: 1,
+      flavorText: "Imagine a snail leaving behind a sticky residue.  It's gross.  Actually, it's not like that.  But it's still gross."
     },
     electronicskit: {
       key: "electronicskit",
@@ -65,7 +67,8 @@ Pixpls.Data = {
       label: "EKGen",
       _produceTarget: "extruder",
       _costTarget: "extruder",
-      baseProduce: 1
+      baseProduce: 1,
+      flavorText: "A virtual toolbox for making more virtual stuff.  Makes sense."
     },
     factory: {
       key: "factory",
@@ -73,7 +76,8 @@ Pixpls.Data = {
       label: "FGen",
       _produceTarget: "electronicskit",
       _costTarget: "electronicskit",
-      baseProduce: 1
+      baseProduce: 1,
+      flavorText: "Making things by hand is so 18th centicycle.  They work better when we make them en masse.  That's French for en masse."
     },
     cementprinter: {
       key: "cementprinter",
@@ -81,7 +85,8 @@ Pixpls.Data = {
       label: "CPGen",
       _produceTarget: "factory",
       _costTarget: "factory",
-      baseProduce: 1
+      baseProduce: 1,
+      flavorText: "Virtual Factories are made out of virtual cement.  That's the secret ingredient.  The other secret ingredient is virtual secrets."
     },
     designlab: {
       key: "designlab",
@@ -89,7 +94,8 @@ Pixpls.Data = {
       label: "DLGen",
       _produceTarget: "cementprinter",
       _costTarget: "cementprinter",
-      baseProduce: 1
+      baseProduce: 1,
+      flavorText: "It's not so much useful as a place to put all those hipxlsters."
     },
     ai: {
       key: "ai",
@@ -97,7 +103,8 @@ Pixpls.Data = {
       label: "AIGen",
       _produceTarget: "designlab",
       _costTarget: "designlab",
-      baseProduce: 1
+      baseProduce: 1,
+      flavorText: "Everybody run away from the singularity!"
     }
   },
 
