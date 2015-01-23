@@ -36,6 +36,7 @@ function Generator (params) {
   // Optional
   this.num = params.num || 0;
   this.message = params.message || "Buy!";
+  this.costPower = params.costPower;
 
   // Fixed
   this.buyAmount = params.buyAmout || 1;

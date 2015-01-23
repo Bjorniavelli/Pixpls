@@ -1,3 +1,7 @@
+body {
+  font-size: 14px;
+}
+
 header {
   display: block;
   height: 50px;
@@ -36,9 +40,9 @@ section>article {
 .mod {
   display: inline-block;
   vertical-align: top;
-  padding: 5px;
-  margin: 10px;
-  width: 110px;
+  padding: 3px;
+  margin: 3px;
+  width: 80px;
   background-color: #FFEEDD;
   border: 1px dashed black;
 }
@@ -48,14 +52,14 @@ section>article {
 }
 
 .name {
-  font-size: larger;
+  font-size: normal;
   font-style: bold;
 }
 .description {
-
+  font-size: small;
 }
 .flavortext {
-  font-size: smaller;
+  font-size: x-small;
   font-style: italic;
   text-align: right;
 }

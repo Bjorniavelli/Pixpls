@@ -169,9 +169,11 @@ Pixpls.Data = {
         Pixpls.Generators.list["pixel"].num /= 2;
         Pixpls.Generators.list["pixel"].costPower /= 2;
         this.description = "Better.  Turns out Pixel Darwinism is working.  Try again!";
+        this.updateDescription();
         new Log({message: "*Jargon* *Jargon* Fun fact: In Star Trek scripts, they just wrote 'Jargon' and they got really good at making stuff up.  Pixel cost reduced to power " + Pixpls.Generators.list["pixel"].costPower + "." });
         if (Pixpls.Generators.list["pixel"].costPower <= 2) {
           Pixpls.Mods.purchaseMod(this);
+          this.description = "Did you hear the one about the farmer who tried to train his horse to eat a single oat a day?  It worked until the stupid horse up and died.  Probably don't want to repeat that experiment."
         }
       }
     },
@@ -275,6 +277,18 @@ Pixpls.Data = {
       },
       buy: function() {
         $(".mods").show();
+      }
+    },
+    ShowTabs: {
+      hidden: true,
+      name: "Show Tab Menu",
+      label: "ShowTabs",
+      description: "This will begins unlocking the second phase of the game.",
+      makeAvailable: function() {
+        return false;
+      },
+      buy: function() {
+        // Something something something tab menu...
       }
     }
   }

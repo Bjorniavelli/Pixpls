@@ -53,21 +53,6 @@ Pixpls.Mods = {
     this.availableMods[mod.label] = this.unavailableMods[mod.label];
     delete this.unavailableMods[mod.label];
 
-    // var index;
-    // for (index = 0; index < this.unavailableMods.length; index++) {
-    //   if (mod.label == this.unavailableMods[index].label) {
-    //     break;
-    //   }
-    // }
-    //
-    // if (index < 0 || index > this.unavailableMods.length) {
-    //   console.log ("We have a problem.  " + mod.name + " is trying to display, but is not in unavailableMods.");
-    //   return;
-    // }
-    //
-    // this.unavailableMods.splice(index, 1);
-    // this.availableMods.push(mod);
-
     //mod.div.detach();
     $(".available").append(mod.div);
   },
@@ -80,21 +65,6 @@ Pixpls.Mods = {
     this.purchasedMods[mod.label] = this.availableMods[mod.label];
     delete this.availableMods[mod.label];
 
-    // var index;
-    // for (index = 0; index < this.availableMods.length; index++) {
-    //   if (mod.label == this.availableMods[index].label) {
-    //     break;
-    //   }
-    // }
-    //
-    // if (index < 0 || index >= this.availableMods.length) {
-    //   console.log ("We have a problem.  " + mod.name + " is trying to purchase, but is not in availableMods.");
-    //   return;
-    // }
-    //
-    // this.availableMods.splice(index, 1);
-    // this.purchasedMods.push(mod);
-
     //mod.div.detach();
     mod.buttonSpan.remove();
     $(".purchased").append(mod.div);
@@ -104,11 +74,6 @@ Pixpls.Mods = {
     if (this.purchasedMods[modLabel]) {
       return true;
     }
-    // for (var i = 0; i < this.purchasedMods.length; i++) {
-    //   if (this.purchasedMods[i].label == modLabel) {
-    //     return true;
-    //   }
-    // }
 
     return false;
   },
@@ -154,6 +119,9 @@ Mod.prototype.update = function() {
     // this.button.hide();
   }
 };
+Mod.prototype.updateDescription = function() {
+  $("." + this.label).find(".description").html(this.description);
+}
 Mod.prototype.render = function() {
   var div = $("<div />");
   div.addClass(this.label);
