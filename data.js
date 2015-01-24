@@ -145,7 +145,7 @@ Pixpls.Data = {
       label: "RedGluttony",
       description: "Those pixels seem to be eating an inordinate amount.  Maybe you're clicking wrong?  This will train you.",
       makeAvailable: function() { return Pixpls.Generators.list["pixel"].num >= 3; },
-      affordable: function() { return Pixpls.Generators.list["click"].num >= 10; },
+      affordable: function() { return Pixpls.Generators.list["click"].num >= 5; },
       buy: function() {
         Pixpls.Generators.list["click"].num -= 10;
         Pixpls.Generators.list["pixel"].costPower = 16;
@@ -183,9 +183,9 @@ Pixpls.Data = {
       label: "ClickChef",
       description: "Clicks are eating too much!  You're starving!  But maybe if you hired a chef, you'd be able to reduce your raw click consumption.",
       makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 4; },
-      affordable: function() { return Pixpls.Generators.list["click"].num >= 10 && Pixpls.Generators.list["pixel"].num >= 1; },
+      affordable: function() { return Pixpls.Generators.list["click"].num >= 5 && Pixpls.Generators.list["pixel"].num >= 1; },
       buy: function() {
-        Pixpls.Generators.list["click"].num -= 10;
+        Pixpls.Generators.list["click"].num -= 5;
         Pixpls.Generators.list["pixel"].num -= 1;
         this.description = "Happy Chef!  He chops and sizzles pixels into a tasty slurry.  But you understand little of what he says.";
         this.updateDescription();
@@ -203,9 +203,9 @@ Pixpls.Data = {
       label: "ClickChef2",
       description: "Your chef is obviously overworked.  Maybe you should hire someone to assist him.",
       makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 6 && Pixpls.Mods.purchased("ClickChef"); },
-      affordable: function() {return Pixpls.Generators.list["click"].num >= 100 && Pixpls.Generators.list["pixel"].num >= 1; },
+      affordable: function() {return Pixpls.Generators.list["click"].num >= 25 && Pixpls.Generators.list["pixel"].num >= 1; },
       buy: function() {
-        Pixpls.Generators.list["click"].num -= 100;
+        Pixpls.Generators.list["click"].num -= 25;
         Pixpls.Generators.list["pixel"].num -= 1;
         this.description = "Bork! Bork! Bork! Doesn't seem very effective, but the Chef is sure more productive, somehow.";
         this.updateDescription();
@@ -223,9 +223,9 @@ Pixpls.Data = {
       label: "ClickChef3",
       description: "Just two can't provide for all your Pixpls!  You better hire something to prepare the clicks for your chef staff.",
       makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 10 && Pixpls.Mods.purchased("ClickChef2"); },
-      affordable: function() {return Pixpls.Generators.list["click"].num >= 1000 && Pixpls.Generators.list["pixel"].num >= 1; },
+      affordable: function() {return Pixpls.Generators.list["click"].num >= 125 && Pixpls.Generators.list["pixel"].num >= 1; },
       buy: function() {
-        Pixpls.Generators.list["click"].num -= 1000;
+        Pixpls.Generators.list["click"].num -= 125;
         Pixpls.Generators.list["pixel"].num -= 1;
         this.description = "Makin' di Popedicorn! Shrimpies!  Shrimpies?  Shrimpies!  B7UmUX68KtE";
         this.updateDescription();
@@ -274,6 +274,66 @@ Pixpls.Data = {
         this.updateDescription();
         new Log({message: "Combining things willy nilly like that just seems... icky."});
         Pixpls.Generators.baseProduce *= 2;
+        Pixpls.Mods.purchaseMod(this);
+      }
+    },
+    RenRate2: {
+      name: "Rendererers",
+      label: "RenRate2",
+      description: "Doubling is Ok.  But can we emit pixels at a faster rate?",
+      makeAvailable: function() { return Pixpls.Generators.list["renderer"].num >= 3; },
+      affordable: function() {
+        return Pixpls.Generators.list["renderer"].num >= 3
+          && Pixpls.Generators.list["pixel"].num >= 5
+          && Pixpls.Generators.purchased("RenRate2");
+      },
+      buy: function() {
+        Pixpls.Generators.list["pixel"].num -= 5;
+        Pixpls.Generators.list["renderer"].num /= 3;
+        this.description = "Cool, it turns out these renderers will just sort of adhere to each other.  But they're getting bulky.";
+        this.updateDescription();
+        new Log({message: "A six-fold improvement!  Well, over the original."});
+        Pixpls.Generators.baseProduce *= 2;
+        Pixpls.Mods.purchaseMod(this);
+      }
+    },
+    RenRate3: {
+      name: "Rerendererers",
+      label: "RenRate3",
+      description: "Is this like a prophxlactic?  Maybe we can...",
+      makeAvailable: function() { return Pixpls.Generators.list["renderer"].num >= 10; },
+      affordable: function() {
+        return Pixpls.Generators.list["renderer"].num >= 10
+          && Pixpls.Generators.list["pixel"].num >= 5
+          && Pixpls.Generators.purchased("RenRate2");
+      },
+      buy: function() {
+        Pixpls.Generators.list["pixel"].num -= 5;
+        Pixpls.Generators.list["renderer"].num /= 10;
+        this.description = "Now we're getting somewhere!  Orders of magnitude!";
+        this.updateDescription();
+        new Log({message: "Don't encourage the pixels, encourage the pixelators!"});
+        Pixpls.Generators.baseProduce *= 2;
+        Pixpls.Mods.purchaseMod(this);
+      }
+    },
+    RenRate4: {
+      name: "Renderers the Next Generation",
+      label: "RenRate4",
+      description: "We should start from scratch.  We've learned a lot.  Will the next generation work better?",
+      makeAvailable: function() { return Pixpls.Generators.list["renderer"].num >= 10; },
+      affordable: function() {
+        return Pixpls.Generators.list["renderer"].num >= 2
+          && Pixpls.Generators.list["pixel"].num >= 10
+          Pixpls.Generators.purchased("RenRate3");
+      },
+      buy: function() {
+        Pixpls.Generators.list["pixel"].num -= 5;
+        Pixpls.Generators.list["renderer"].num = 0;
+        this.description = "This generation of renderers seems much more effective.  Also, they smell better.";
+        this.updateDescription();
+        new Log({message: "Scorched Earth!  But maybe you should see how the new renderers work!"});
+        Pixpls.Generators.baseProduce = 1;
         Pixpls.Mods.purchaseMod(this);
       }
     },
