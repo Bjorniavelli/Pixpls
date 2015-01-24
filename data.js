@@ -49,7 +49,7 @@ Pixpls.Data = {
       num: 0,
       _produceTarget: "pixel",
       _costTarget: "pixel",
-      baseProduce: 1,
+      baseProduce: 0.0005,
       flavorText: "All we have to do is make more pixels?  That doesn't seem so hard."
     },
     extruder: {
@@ -58,7 +58,7 @@ Pixpls.Data = {
       label: "EGen",
       _produceTarget: "renderer",
       _costTarget: "renderer",
-      baseProduce: 1,
+      baseProduce: 0.0005,
       flavorText: "Imagine a snail leaving behind a sticky residue.  It's gross.  Actually, it's not like that.  But it's still gross."
     },
     electronicskit: {
@@ -67,7 +67,7 @@ Pixpls.Data = {
       label: "EKGen",
       _produceTarget: "extruder",
       _costTarget: "extruder",
-      baseProduce: 1,
+      baseProduce: 0.0005,
       flavorText: "A virtual toolbox for making more virtual stuff.  Makes sense."
     },
     factory: {
@@ -76,7 +76,7 @@ Pixpls.Data = {
       label: "FGen",
       _produceTarget: "electronicskit",
       _costTarget: "electronicskit",
-      baseProduce: 1,
+      baseProduce: 0.0005,
       flavorText: "Making things by hand is so 18th centicycle.  They work better when we make them en masse.  That's French for en masse."
     },
     cementprinter: {
@@ -85,7 +85,7 @@ Pixpls.Data = {
       label: "CPGen",
       _produceTarget: "factory",
       _costTarget: "factory",
-      baseProduce: 1,
+      baseProduce: 0.0005,
       flavorText: "Virtual Factories are made out of virtual cement.  That's the secret ingredient.  The other secret ingredient is virtual secrets."
     },
     designlab: {
@@ -94,7 +94,7 @@ Pixpls.Data = {
       label: "DLGen",
       _produceTarget: "cementprinter",
       _costTarget: "cementprinter",
-      baseProduce: 1,
+      baseProduce: 0.0005,
       flavorText: "It's not so much useful as a place to put all those hipxlsters."
     },
     ai: {
@@ -103,7 +103,7 @@ Pixpls.Data = {
       label: "AIGen",
       _produceTarget: "designlab",
       _costTarget: "designlab",
-      baseProduce: 1,
+      baseProduce: 0.0005,
       flavorText: "Everybody run away from the singularity!"
     }
   },
@@ -154,6 +154,7 @@ Pixpls.Data = {
           configurable: true
         });
         this.description = "The pixels are still eating the same amount.  You're just producing more efficiently.";
+        this.updateDescription();
         new Log({message: "Ohhhh!  You were using an inverse phase relation on your mouse.  We'll filter out those Star Trekian woes.  That will make clicks more nutritious."});
         Pixpls.Mods.purchaseMod(this);
       }
@@ -187,6 +188,7 @@ Pixpls.Data = {
         Pixpls.Generators.list["click"].num -= 10;
         Pixpls.Generators.list["pixel"].num -= 1;
         this.description = "Happy Chef!  He chops and sizzles pixels into a tasty slurry.  But you understand little of what he says.";
+        this.updateDescription();
         new Log({message: "One pixel reassigned to cheffery."});
         if (Pixpls.Generators.list["pixel"].baseProduce < 0) {
           Pixpls.Generators.list["pixel"].baseProduce /= 10;
@@ -206,6 +208,7 @@ Pixpls.Data = {
         Pixpls.Generators.list["click"].num -= 100;
         Pixpls.Generators.list["pixel"].num -= 1;
         this.description = "Bork! Bork! Bork! Doesn't seem very effective, but the Chef is sure more productive, somehow.";
+        this.updateDescription();
         new Log({message: "One pixel reassigned to chef assistantery."});
         if (Pixpls.Generators.list["pixel"].baseProduce < 0) {
           Pixpls.Generators.list["pixel"].baseProduce /= 10;
@@ -225,6 +228,7 @@ Pixpls.Data = {
         Pixpls.Generators.list["click"].num -= 1000;
         Pixpls.Generators.list["pixel"].num -= 1;
         this.description = "Makin' di Popedicorn! Shrimpies!  Shrimpies?  Shrimpies!  B7UmUX68KtE";
+        this.updateDescription();
         new Log({message: "One pixel reassigned to uhhh... Shrimpies?"});
         if (Pixpls.Generators.list["pixel"].baseProduce < 0) {
           Pixpls.Generators.list["pixel"].baseProduce /= 10;
@@ -238,18 +242,38 @@ Pixpls.Data = {
       name: "Pixel Farming",
       label: "PixelFarm",
       description: "The chefs aren't keeping up.  Maybe another approach.  Can the pixels make their own food?",
-      makeAvailable: function() { return Pixpls.Generators.list["pixel"].numLost >= 20 && Pixpls.Mods.purchased("ClickChef2"); },
+      makeAvailable: function() {
+         return Pixpls.Generators.list["pixel"].numLost >= 20 && Pixpls.Mods.purchased("ClickChef2") &&
+                purchased("ClickChef3");
+        },
       affordable: function() {return Pixpls.Generators.list["click"].num >= 1000 && Pixpls.Generators.list["pixel"].num >= 1; },
       buy: function() {
         Pixpls.Generators.list["click"].num -= 1000;
         Pixpls.Generators.list["pixel"].num -= 1;
         this.description = "You refactor some of your clicks as seeds.  One lonely pixel is responsible for their farming.";
+        this.updateDescription();
         new Log({message: "Agriclicktural revolution?  Boundless wealth will soon be <s>theirs</s> yours!"});
         if (Pixpls.Generators.list["pixel"].baseProduce < 0) {
           Pixpls.Generators.list["pixel"].baseProduce *= -1;
         } else {
           Pixpls.Generators.list["pixel"].baseProduce *= 10;
         }
+        Pixpls.Mods.purchaseMod(this);
+      }
+    },
+    RenRate: {
+      name: "Renderers",
+      label: "RenRate",
+      description: "Those Renderers are sloooooooooow.  Maybe we can speed them up?",
+      makeAvailable: function() { return Pixpls.Generators.list["renderer"].num >= 1; },
+      affordable: function() { return Pixpls.Generators.list["renderer"].num >= 2 && Pixpls.Generators.list["pixel"].num >= 5; },
+      buy: function() {
+        Pixpls.Generators.list["pixel"].num -= 5;
+        Pixpls.Generators.list["renderer"].num /= 2;
+        this.description = "If we combine them together, it turns out they produce twice as fast!";
+        this.updateDescription();
+        new Log({message: "Combining things willy nilly like that just seems... icky."});
+        Pixpls.Generators.baseProduce *= 2;
         Pixpls.Mods.purchaseMod(this);
       }
     },

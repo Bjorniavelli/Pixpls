@@ -82,7 +82,7 @@ Generator.prototype.updateArticle = function() {
   if (this.numLost > 0) {
     this.article.find(".numLost").html("<var>" + this.numLost.toFixed(2) + "</var> lost due to poor planning.");
   }
-  if (this.producetarget) {
+  if (this.produceTarget) {
     this.article.find(".produces").html("Produces <var>" + this.baseProduce + "</var> " + this.produceTarget.name + " per " + this.name + " per second. (" + this.produce + " total)");
   }
   if (this.buyAmount != 1) {
@@ -174,12 +174,6 @@ Generator.prototype.init = function() {
   this.createLi();
 };
 Generator.prototype.update = function() {
-  // This doesn't make any stinking sense.  Where is this key variable coming from?  I moved it from elsewhere, and it was within the ppropriate closure, but now...?
-  // $("menu ." + key + " var").html(toFixed(Pixpls.Generators.list[key].num, 2)); // This 'key' is going to cause problems later...
-  // if (this.costTarget) {
-  //   this.article.find(".generatorCost").html("Costs <var>" + this.cost + "</var> " + this.costTarget.name + " per " + this.name + ".");
-  // }
-
   this.updateArticle();
   this.updateLi();
 
@@ -188,6 +182,11 @@ Generator.prototype.update = function() {
     var tar = this.produceTarget;
     if (tar.num + amount > 0) {
       tar.num += amount;
+      if (amount < 0) {
+        tar.numLost -= amount;
+      } else {
+        tar.numProduced += amount;
+      }
     }
     else {
       tar.num -= amount;
