@@ -1,4 +1,6 @@
 Pixpls.Mods = {
+  list: [],
+
   update: function() {
     for (key in this.unavailableMods) {
       if (this.unavailableMods[key].makeAvailable()) {
@@ -77,46 +79,37 @@ Pixpls.Mods = {
 
     return false;
   },
-
-  unavailableMods: {},
-  availableMods: {},
-  purchasedMods: {},
-  hiddenMods: {},
-  hiddenQueue: []
 };
+
+function HiddenMod (params) {
+  Resource.call(this, params);
+  this.makeAvailable = params.makeAvailable || "returnFalse";
+  this.affordable = params.affordable || "returnTrue";
+  this.buy = params.buy || "defaultBuy";
+
+  this.status = params.status || "hidden";
+
+  Pixpls.resources[this.label] = this;
+  Pixpls.Mods.list.push(this.label);
+}
+HiddenMod.prototype = Object.create(Resource.prototype);
 
 function Mod (params) {
-  this.name = params.name || "";
-  this.label = params.label || "";
-  this.description = params.description || "";
-  this.flavorText = params.flavorText || "";
-  this.message = params.message || "Buy";
-  this.hidden = params.hidden || false;
+  HiddenMod.call(this, params);
 
-  var t = this;
-  this.makeAvailable = params.makeAvailable || function() { return false; };
-  this.affordable = params.affordable || function() { return true; };
-  this.buy = params.buy || function() { new Log({message: "Bought " + t.name + "."}); };
-
-  if (this.hidden != true) {
-    Pixpls.Mods.unavailableMods[this.label] = this;
-    this.render();
-  } else {
-    Pixpls.Mods.hiddenMods[this.label] = this;
-  }
+  this.status = params.status || "unavailable";
+  this.render();
 };
+Mod.prototype = Object.create(HiddenMod.prototype);
+
 Mod.prototype.update = function() {
   if ( this.affordable()) {
     this.notButton.css({display: "none"});
     this.button.css({display: "block"});
-    //this.notButton.hide();
-    //this.button.show();
   }
   if ( !this.affordable()) {
     this.notButton.css({display: "inline"});
     this.button.css({display: "none"});
-    // this.notButton.show(); // Show and hide keep freaking out... but why?
-    // this.button.hide();
   }
 };
 Mod.prototype.updateDescription = function() {

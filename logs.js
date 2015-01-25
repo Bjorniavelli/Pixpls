@@ -1,9 +1,15 @@
 function Log(params) {
-  this.message = params.message;
-  this.enabled = true;
-  this.id = Pixpls.Logs.nextLogId;
-  Pixpls.Logs.nextLogId++;
-  this.timeStampe = Date.now();
+  if (typeof params == "string") {
+    this.message = params;
+  } else {
+    this.message = params.message;
+  }
+  this.id = params.id || Pixpls.Logs.nextLogId;
+  this.timeStamp = params.timeStamp || Date.now();
+
+  if (this.id >= Pixpls.Logs.nextLogId) {
+    Pixpls.Logs.nextLogId = this.id + 1;
+  }
 
   Pixpls.Logs.list.unshift(this);
   Pixpls.Logs.update();

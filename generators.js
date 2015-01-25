@@ -1,5 +1,5 @@
 Pixpls.Generators = {
-  list: {},
+  list: [],
   init: function() {
     var section = $("<section id=\"generators\" />"); // I don't think we need to add a class, because we'll set it as a this.
     var menu = $("<menu />");
@@ -19,15 +19,11 @@ Pixpls.Generators = {
 }
 
 function Generator (params) {
+  Resource.call(this, params);
+
   this._produceTarget = params._produceTarget;
   this._costTarget = params._costTarget;
   this.costRatio = params.costRatio;
-
-  // Descriptions
-  this.key = params.key;
-  this.name = params.name;
-  this.label = params.label;
-  this.flavorText = params.flavorText;
 
   // Logic
   this.baseCost = params.baseCost || 1;
@@ -39,11 +35,14 @@ function Generator (params) {
   this.costPower = params.costPower;
 
   // Fixed
-  this.buyAmount = params.buyAmout || 1;
+  this.buyAmount = params.buyAmount || 1;
   this.numLost = params.numLost || 0;
 
-  this.init();
-  Pixpls.Generators.list[params.key] = this;
+  this.createArticle();
+  this.createLi();
+
+  Pixpls.resources[params.label] = this;
+  Pixpls.Generators.list.push(this.label);
 };
 
 Object.defineProperty(Generator.prototype, "article", {
@@ -94,7 +93,7 @@ Generator.prototype.createLi = function() {
   var t = this;
   var li = $("<li />");
 
-  li.addClass(key);
+  li.addClass(this.label);
   li.html("<a href=\"\">" + this.name + "</a>: <var>" + toFixed(this.num, 2) + "</var>");
   li.append("<button>" + this.message + "</button>");
   li.on("click", "a", function(e) { e.preventDefault(); t.select(); });
@@ -167,11 +166,6 @@ Generator.prototype.buy = function() {
     this.num += this.buyAmount;
     return;
   }
-};
-Generator.prototype.init = function() {
-  this.createDisplayMod(); // This is going to cause us problems later... because it's creating extra hidden mods...
-  this.createArticle();
-  this.createLi();
 };
 Generator.prototype.update = function() {
   this.updateArticle();

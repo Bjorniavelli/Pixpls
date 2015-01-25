@@ -10,6 +10,7 @@ var Pixpls = {
   tickLength: 100,
   numTicks: 0,
   devMode: true,
+  resources: {},
 
   init: function() {
     Pixpls.Generators.init();
@@ -17,15 +18,18 @@ var Pixpls = {
 
     // This needs to be modified a bit, because the load isn't displaying the Mods div.
     // It's because the hiddenMod that displays them isn't there any more in the save data.
-    if (localStorage["savedata"] == "true") {
-      Pixpls.load();
-    } else {
+    // if (localStorage["savedata"] == "true") {
+    //   Pixpls.load();
+    // } else {
       Pixpls.Data.init();
-    }
+    // }
 
     $("header").on("click", "#savebutton", Pixpls.save);
     $("header").on("click", "#loadbutton", Pixpls.load);
     $("header").on("click", "#resetbutton", Pixpls.reset);
+
+    new Log("Welcome to Pixpls! (ver." + Pixpls.ver + ")");
+    new Log("This *is* a clicky game.  How about some tasty, endorphin-producing clicking?");
   },
   update: function() {
     Pixpls.numTicks++;
@@ -43,7 +47,7 @@ var Pixpls = {
 $(document).ready(function() {
   Pixpls.init();
 
-  window.setInterval(Pixpls.update, Pixpls.tickLength);
+  // window.setInterval(Pixpls.update, Pixpls.tickLength);
 });
 
 // Just a note that the tabs will be Generators, Hero, Crafting, Camp, Help, Settings
