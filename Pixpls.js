@@ -442,27 +442,68 @@ Generator.prototype.update = function() {
 
 function boolFunction (o, r) {
   switch(o.type) {
-    case "addresource":
-      Pixpls.resources[o.resource].num += o.num;
+    case "true":
+      return true;
+    case "false":
+      return false;
       break;
-    case "multiplyresource":
-      Pixpls.resources[o.resource].num *= o.num;
-      break;
-    case "resourcenum":
-      if (Pixpls.resources[o.resource].num < o.num) { // These all need more error checking.
+    case "dev":
+      return Pixpls.devMode;
+    case "statusexists":
+      for (key in Pixpls.resources) {
+        if (Pixpls.resources[key].status === o.status) {
+          return true;
+        }
+      }
+      return false;
+    case "status":
+      if (Pixpls.resources[o.mod || r].status != ( o.status || "purchased" )) {
         return false;
       }
       break;
-    case "resourcenumlost":
-      if (Pixpls.resources[o.resource].numLost < o.num) {
+    case "setproperty": // We could probably combine a bunch of these to this.
+      Pixpls.resources[o.resource][o.property] = o.val;
+      break;
+    case "addproperty":
+      Pixpls.resources[o.resource][o.property] += o.val;
+      break;
+    case "mulproperty":
+      Pixpls.resources[o.resource][o.property] *= o.val;
+      break;
+    case "minproperty":
+      if (Pixpls.resources[o.resource][o.property] < o.val) {
         return false;
       }
       break;
-    case "modstatus":
-      if (Pixpls.resources[o.mod || r].status != "purchased") {
+    case "maxproperty":
+      if (Pixpls.resources[o.resource][o.property] > o.val) {
         return false;
       }
       break;
+    // case "addresource":
+    //   Pixpls.resources[o.resource].num += o.num;
+    //   break;
+    // case "multiplyresource":
+    //   Pixpls.resources[o.resource].num *= o.num;
+    //   break;
+    // case "resourcenum":
+    //   if (Pixpls.resources[o.resource].num < o.num) { // These all need more error checking.
+    //     return false;
+    //   }
+    //   break;
+    // case "multiplybaseproduce":
+    //   Pixpls.resources[o.resource].num *= o.num;
+    //   break;
+    // case "resourcenumlost":
+    //   if (Pixpls.resources[o.resource].numLost < o.num) {
+    //     return false;
+    //   }
+    //   break;
+    // case "modstatus":
+    //   if (Pixpls.resources[o.mod || r].status != "purchased") {
+    //     return false;
+    //   }
+    //   break;
     case "time":
       if (Pixpls.numTicks < o.num) {
         return false;
@@ -473,11 +514,11 @@ function boolFunction (o, r) {
         return false;
       }
       break;
-    case "function": // I'm not sure this is ever going to get used...
-      if (!o.function()) {
-        return false;
-      }
-      break;
+    // case "function": // I'm not sure this is ever going to get used...
+    //   if (!o.function()) {
+    //     return false;
+    //   }
+    //   break;
     case "showel":
       $(o.el).show();
       break;
@@ -494,8 +535,11 @@ function boolFunction (o, r) {
     case "log":
       new Log(o.message);
       break;
+    case "default":
+      new Log("Bought " + m.name + "!");
+      break;
     default:
-      console.log(o.type + " is not a handled constraint type.  In " + r.name + "."); // Looks like this error won't work anymore.
+      console.log("Unhandled function map " + o.type + " in " + r +".");
       return false;
   }
 
