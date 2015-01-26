@@ -12,6 +12,11 @@ var Pixpls = {
   devMode: true,
   resources: {},
 
+  logs: [],
+  maxLogs: 1000,
+  maxdisplayLogs: 10,
+  nextLogId: 0,
+
   init: function() {
     //Pixpls.Generators.init();
     // Generators init:
@@ -48,15 +53,15 @@ var Pixpls = {
     $("header").on("click", "#loadbutton", Pixpls.load);
     $("header").on("click", "#resetbutton", Pixpls.reset);
 
+    console.log("!!!");
+    Log("Welcome to Pixpls!");
     new Log("Welcome to Pixpls! (ver." + Pixpls.ver + ")");
+    console.log("???");
     new Log("This *is* a clicky game.  How about some tasty, endorphin-producing clicking?");
   },
   update: function() {
     Pixpls.numTicks++;
     $("#ticknumber").html(toFixed(Pixpls.numTicks, 0));
-
-    // Pixpls.Generators.update();
-    // Pixpls.Mods.update();
 
     for (key in Pixpls.resources) {
       if (Pixpls.resources[key].update) {
@@ -68,6 +73,24 @@ var Pixpls = {
     // if (Pixpls.numTicks % 100 === 0) {
     //   Pixpls.save();
     // }
+  },
+  updateLogs: function() { // Shouldn't happen every frame, just when we make a new log.
+    if (Pixpls.logs.length > Pixpls.maxLogs) {
+      Pixpls.logs = Pixpls.logs.slice(0, PixplsmaxLogs);
+    }
+
+    var footer = $("footer");
+    footer.empty();
+
+    var i = 0;
+    for (var i = 0; i < Pixpls.logs.length; i++) {
+      if (i >= Pixpls.maxDisplayLogs) {
+        break;
+      }
+
+      footer.append("<p>" + Pixpls.logs[i].message + "</p>");
+      i++;
+    }
   }
 };
 $(document).ready(function() {
@@ -78,8 +101,25 @@ $(document).ready(function() {
 
 // Just a note that the tabs will be Generators, Hero, Crafting, Camp, Help, Settings
 
-
 // Class Definitions
+
+function Log (params) {
+  console.log(params);
+  if (typeof params == "string") {
+    this.message = params;
+  } else {
+    this.message = params.message;
+  }
+  this.id = params.id || Pixpls.nextLogId;
+  this.timeStamp = params.timeStamp || Date.now();
+
+  if (this.id >= Pixpls.nextLogId) {
+    Pixpls.nextLogId = this.id + 1;
+  }
+
+  Pixpls.logs.unshift(this);
+  Pixpls.updateLogs();
+};
 
 function Resource (params) {
   this.label = params.label;
@@ -374,29 +414,8 @@ Object.defineProperty(Generator.prototype, "produceTarget", {
 });
 Object.defineProperty(Generator.prototype, "produce", {
   get: function() { return Math.floor(this.num) * this.baseProduce; }
-})
+});
 
-
-// Generator.prototype.createDisplayMod = function() {
-//   var t = this;
-//
-//   new Mod({
-//     hidden: true,
-//     name: "Show " + t.name + " Generator",
-//     label: "Show" + t.label + "Gen",
-//     description: "Display an entry in the generators menu for " + t.name + ".",
-//     makeAvailable: function() {
-//       if (t.key === "click") {
-//         return true;
-//       } else {
-//         return t.produceTarget.num >= 5;
-//       }
-//     },
-//     buy: function() {
-//       t.li.show();
-//     }
-//   });
-// }
 Generator.prototype.select = function() {
   $("#generators>article").hide();
   this.article.show();
@@ -480,30 +499,6 @@ function boolFunction (o, r) {
         return false;
       }
       break;
-    // case "addresource":
-    //   Pixpls.resources[o.resource].num += o.num;
-    //   break;
-    // case "multiplyresource":
-    //   Pixpls.resources[o.resource].num *= o.num;
-    //   break;
-    // case "resourcenum":
-    //   if (Pixpls.resources[o.resource].num < o.num) { // These all need more error checking.
-    //     return false;
-    //   }
-    //   break;
-    // case "multiplybaseproduce":
-    //   Pixpls.resources[o.resource].num *= o.num;
-    //   break;
-    // case "resourcenumlost":
-    //   if (Pixpls.resources[o.resource].numLost < o.num) {
-    //     return false;
-    //   }
-    //   break;
-    // case "modstatus":
-    //   if (Pixpls.resources[o.mod || r].status != "purchased") {
-    //     return false;
-    //   }
-    //   break;
     case "time":
       if (Pixpls.numTicks < o.num) {
         return false;

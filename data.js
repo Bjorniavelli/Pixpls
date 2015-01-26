@@ -399,26 +399,7 @@ Pixpls.Data = {
   ],
   functionList: {
     // Defaults
-    // returnFalse: function(m) {
-    //   return false;
-    // },
-    // returnTrue: function(m) {
-    //   return true;
-    // },
-    // defaultBuy: function(m) {
-    //   new Log("Bought " + m.name + "!");
-    // },
-    // devMode: function(m) {
-    //   return Pixpls.devMode;
-    // },
-
-    // Available Helpers
-    // availablemods: function(m) {
-    //   return true; // I need to change this to a function scanning the resource list for if there's one available... but I may change things before then.
-    // },
-
     // Affordable Helpers
-
     // Buy Helpers
     setclickcostpower: function(m) {
       Object.defineProperty(Pixpls.resources["pixel"], "cost", {
@@ -427,25 +408,12 @@ Pixpls.Data = {
       });
     },
     adjustclickcostpower: function(m) {
+      // I could make a new string handler that takes a bool string handler list and a function handler list for this, but that seems complex.
       if (Pixpls.resources["pixel"].costPower <= 2) { // This stuff is duplicated in the stringmap, but it's not set up for conditionals, atm.
         Pixpls.resources[m].purchase();
         Pixpls.resources[m].description = "Did you hear the one about the farmer who tried to train his horse to eat a single oat a day?  It worked until the stupid horse up and died.  Probably don't want to repeat that experiment."
         Pixpls.resources[m].updateDescription();
       }
     }
-    // increasepixelproduce: function(m) {
-    //   if (Pixpls.resources["pixel"].baseProduce < 0) {
-    //     Pixpls.resources["pixel"].baseProduce /= 10;
-    //   } else {
-    //     Pixpls.resources["pixel"].baseProduce *= 1.1;
-    //   }
-    // },
-    // invertpixelproduce: function(m) { // This seems silly... can we just assign the value?
-    //   if (Pixpls.resources["pixel"].baseProduce < 0) {
-    //     Pixpls.resources["pixel"].baseProduce *= -1;
-    //   } else {
-    //     Pixpls.resources["pixel"].baseProduce *= 10;
-    //   }
-    // }
   }
 }
