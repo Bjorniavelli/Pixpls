@@ -321,63 +321,91 @@ Pixpls.Data = {
       name: "Show Generator Menu",
       description: "This should be hidden, but it will enable the generator menu after a short time.",
       _makeAvailable: [{ type: "time", num: 10 }],
-      _buy: [{ type: "showel", el: "#generators, .click"}]
+      _buy: [
+        { type: "showel", el: "#generators, .click"},
+        { type: "log", message: "This *is* a clicky game.  How about some tasty, endorphin-producing clicking?" },
+        { type: "purchase" }
+      ]
     },{
       label: "showpixelgen",
       type: "hidden",
       name: "Show Pixels Generator",
       description: "Display an entry in the generators menu for Pixels.",
       _makeAvailable: [{ type: "minproperty", resource: "click", property: "num", val: 5 }],
-      _buy: [{ type: "showel", el: ".pixel" }]
+      _buy: [
+        { type: "showel", el: ".pixel" },
+        { type: "purchase" }
+      ]
     },{
       label: "showrenderergen",
       type: "hidden",
       name: "Show Renderers Generator",
       description: "Display an entry in the generators menu for Renderers.",
       _makeAvailable: [{ type: "minproperty", resource: "pixel", property: "num", val: 5 }],
-      _buy: [{ type: "showel", el: ".renderer" }]
+      _buy: [
+        { type: "showel", el: ".renderer" },
+        { type: "purchase" }
+      ]
     },{
       label: "showextrudergen",
       type: "hidden",
       name: "Show Extruders Generator",
       description: "Display an entry in the generators menu for Extruders.",
       _makeAvailable: [{ type: "minproperty", resource: "renderer", property: "num", val: 5 }],
-      _buy: [{ type: "showel", el: ".extruder" }]
+      _buy: [
+        { type: "showel", el: ".extruder" },
+        { type: "purchase" }
+      ]
     },{
       label: "showelectronicskitgen",
       type: "hidden",
       name: "Show Electronics Kit Generator",
       description: "Display an entry in the generators menu for Electronics Kits.",
       _makeAvailable: [{ type: "minproperty", resource: "extruder", property: "num", val: 5 }],
-      _buy: [{ type: "showel", el: ".electronicskit" }]
+      _buy: [
+        { type: "showel", el: ".electronicskit" },
+        { type: "purchase" }
+      ]
     },{
       label: "showfactorygen",
       type: "hidden",
       name: "Show Factory Generator",
       description: "Display an entry in the generators menu for Factories.",
       _makeAvailable: [{ type: "minproperty", resource: "electronicskit", property: "num", val: 5 }],
-      _buy: [{ type: "showel", el: ".factory" }]
+      _buy: [
+        { type: "showel", el: ".factory" },
+        { type: "purchase" }
+      ]
     },{
       label: "showcementprintergen",
       type: "hidden",
       name: "Show Cement Printer Generator",
       description: "Display an entry in the generators menu for Cement Printers.",
       _makeAvailable: [{ type: "minproperty", resource: "factory", property: "num", val: 5 }],
-      _buy: [{ type: "showel", el: ".cementprinter" }]
+      _buy: [
+        { type: "showel", el: ".cementprinter" },
+        { type: "purchase" }
+      ]
     },{
       label: "showdesignlabgen",
       type: "hidden",
       name: "Show Design Lab Generator",
       description: "Display an entry in the generators menu for Design Labs.",
       _makeAvailable: [{ type: "minproperty", resource: "cementprinter", property: "num", val: 5 }],
-      _buy: [{ type: "showel", el: ".designlab" }]
+      _buy: [
+        { type: "showel", el: ".designlab" },
+        { type: "purchase" }
+      ]
     },{
       label: "showaigen",
       type: "hidden",
       name: "Show AI Generator",
       description: "Display an entry in the generators menu for AIs.",
       _makeAvailable: [{ type: "minproperty", resource: "designlab", property: "num", val: 5 }],
-      _buy: [{ type: "showel", el: ".ai" }]
+      _buy: [
+        { type: "showel", el: ".ai" },
+        { type: "purchase" }
+      ]
     },{
       label: "showmods",
       type: "hidden",
@@ -387,14 +415,20 @@ Pixpls.Data = {
         { type: "time", num: 20 },
         { type: "statusexists", status: "available" },
       ],
-      _buy: [{ type: "showel", el: ".mods" }]
+      _buy: [
+        { type: "showel", el: ".mods" },
+        { type: "purchase" }
+      ]
     },{
       label: "showtabs",
       type: "hidden",
       name: "Show Tab Menu",
       description: "This will begins unlocking the second phase of the game.",
       _makeAvailable: [{ type: "false" }], // doesn't do anything, yet...
-      _buy: [{ type: "showel", el: ".tabs" }]
+      _buy: [
+        { type: "showel", el: ".tabs" },
+        { type: "purchase" }
+      ]
     }
   ],
   functionList: {

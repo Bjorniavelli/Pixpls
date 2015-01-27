@@ -53,11 +53,8 @@ var Pixpls = {
     $("header").on("click", "#loadbutton", Pixpls.load);
     $("header").on("click", "#resetbutton", Pixpls.reset);
 
-    console.log("!!!");
-    Log("Welcome to Pixpls!");
+    // Stink.  This is not showing the first log.
     new Log("Welcome to Pixpls! (ver." + Pixpls.ver + ")");
-    console.log("???");
-    new Log("This *is* a clicky game.  How about some tasty, endorphin-producing clicking?");
   },
   update: function() {
     Pixpls.numTicks++;
@@ -82,15 +79,58 @@ var Pixpls = {
     var footer = $("footer");
     footer.empty();
 
-    var i = 0;
+    var numLogs = 0;
     for (var i = 0; i < Pixpls.logs.length; i++) {
-      if (i >= Pixpls.maxDisplayLogs) {
+      if (numLogs >= Pixpls.maxDisplayLogs) {
         break;
       }
 
       footer.append("<p>" + Pixpls.logs[i].message + "</p>");
-      i++;
+      numLogs++;
     }
+  },
+  save: function() { // This is pretty simple... is it all I need??
+    localStorage["savedata"] = true;
+    localStorage["ver"] = Pixpls.ver;
+    localStorage["numTicks"] = Pixpls.numTicks;
+
+    localStorage["resources"] = JSON.stringify(Pixpls.resources);
+  },
+  load: function() {
+    // reverse localStorage save info with logic for versioning.
+    if (localStorage["savedata"] != "true") {
+      new Log("Nope.  I refuse to load.  Also, there's no save file.  Not even an old one that the Developer Overlord deprecated.");
+      return;
+    }
+
+    if (Pixpls.ver != localStorage["ver"]) {
+      new Log("New Version!  Luckily, your save file is going to attempt to load.");
+    }
+
+    Pixpls.numTicks = localStorage["numTicks"];
+
+    // This seems pretty easy... but does it fix some of the Object.setProperty's?
+    Pixpls.resources = JSON.parse(localStorage["resources"]);
+
+    new Log("Game loaded!");
+    return true;
+  },
+  reset: function() {
+    if (!window.confirm("This is an actual reset.  It's not fancy prestige stuff.  You probably don't want to do this.  Continue?")) {
+      new Log("Pixpls Apocalypse Averted!");
+      return;
+    }
+    new Log("Gauss!  Was it worth it?");
+
+    localStorage["savedata"] = false;
+    Pixpls.numTicks = 0;
+
+    $("#generators").find("li").remove();
+    $("#generators").find("article").remove();
+
+    Pixpls.resources = {};
+
+    Pixpls.init();
   }
 };
 $(document).ready(function() {
@@ -104,7 +144,6 @@ $(document).ready(function() {
 // Class Definitions
 
 function Log (params) {
-  console.log(params);
   if (typeof params == "string") {
     this.message = params;
   } else {
@@ -239,7 +278,7 @@ HiddenMod.prototype.update = function() {
 }
 
 HiddenMod.prototype.purchase = function() {
-  this.status = hiddenPurchased;
+  this.status = "hiddenPurchased";
 }
 
 function Mod (params) {
