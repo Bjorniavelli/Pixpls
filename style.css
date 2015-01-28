@@ -28,7 +28,7 @@ section>menu {
   border: 1px solid black;
   background-color: #DDDDDD;
 }
-section>article {
+article {
   display: inline-block;
   vertical-align: top;
 }

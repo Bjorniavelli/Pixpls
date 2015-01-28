@@ -127,12 +127,17 @@ var Pixpls = {
     }
   }
 };
+
+// "Main", starts game and then initiates game loop.
 $(document).ready(function() {
   if (localStorage["savedata"] == "true") {
     Pixpls.load();
   } else {
     Pixpls.reset();
   }
+
+  // calling hide here is so terrible, but for some reason it's not hiding it when I call it elsewhere.
+  $("article").hide();
 
   window.setInterval(Pixpls.update, Pixpls.tickLength);
 });
@@ -241,15 +246,13 @@ function HiddenMod (params) {
   }
 
   Pixpls.resources[this.label] = this;
-//  Pixpls.Mods.list.push(this.label);
 }
 HiddenMod.prototype = Object.create(Resource.prototype);
 HiddenMod.prototype.update = function() {
   switch(this.status) {
     case "hidden":
       if (this.makeAvailable()) {
-        // It's buying the thing, but it's not displaying the generators properly.
-        this.buy(); // Change status within the buy?
+        this.buy();
       }
       break;
     case "hiddenPurchased":
@@ -257,7 +260,7 @@ HiddenMod.prototype.update = function() {
       break;
     case "unavailable":
       if (this.makeAvailable()) {
-        this.display(); // This needs to be switched out of the Pixpls.Mods...
+        this.display();
       }
       break;
     case "available":
@@ -295,7 +298,7 @@ Mod.prototype.display = function() {
   this.status = "available";
   $(".available").append(this.div);
 }
-Mod.prototype.purchase = function() { // This doesn't handle hiddenmods, gonna cause problems.
+Mod.prototype.purchase = function() {
   this.status = "purchased";
   $(".purchased").append(this.div);
   this.buttonSpan.remove();
@@ -393,7 +396,7 @@ function Generator (params) {
 
 Object.defineProperty(Generator.prototype, "article", {
   get: function() {
-    return $("#generators>." + this.key);
+    return $("#generators>article." + this.label);
   }
 });
 Object.defineProperty(Generator.prototype, "li", {
@@ -402,23 +405,19 @@ Object.defineProperty(Generator.prototype, "li", {
   }
 });
 Generator.prototype.createArticle = function() {
-  var article = $("<article />");
-  article.addClass(this.key);
+  var article = $("<article class=\"" + this.label + "\" />");
   var name = this.name ? this.name : "There's nothing here!";
   var flavorText = this.flavorText ? this.flavorText : this.name;
   article.append("<h2>" + name + "</h2>");
   article.append("<em>" + flavorText + "</em>");
 
-  // These ones need some 'ifs'.  In fact, all of these should just be if they're defined.
-  article.append ("<p class=\"numLost\"></p>"); // This needs to be added or removed dynamically... But can I do it without rebuilding the whole article?
+  article.append ("<p class=\"numLost\"></p>");
   article.append ("<p class=\"generatorCost\"></p>");
   article.append ("<p class=\"produces\"></p>");
   article.append ("<p class=\"buyAmount\"></p>");
 
   $("#generators").append(article);
-  article.hide();
-  // Fix this later... >_>
-  //Pixpls.Generators.section.append(article);
+  this.article.hide();
 };
 Generator.prototype.updateArticle = function() {
   if (this.costTarget) {
