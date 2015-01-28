@@ -1,21 +1,23 @@
-
 Pixpls.Data = {
-  init: function() {
-    for (var i = 0; i < this.resourceList.length; i++) {
-      switch (this.resourceList[i].type) {
-        case "generator":
-          new Generator(this.resourceList[i]);
-          break;
-        case "hidden":
-          new HiddenMod(this.resourceList[i]);
-          break;
-        case "mod":
-          new Mod(this.resourceList[i]);
-          break;
-        default:
-          new Resource(this.resourceList[i]);
-          break;
-      }
+  newResource: function(r) {
+    var newR;
+    switch (r.type) {
+      case "generator":
+        newR = new Generator(r);
+        break;
+      case "hidden":
+        newR = new HiddenMod(r);
+        break;
+      case "mod":
+        newR = new Mod(r);
+        break;
+      default:
+        newr = new Resource(r);
+        break;
+    }
+    // Is there a better conditional here?
+    if (newR.status == "hiddenPurchased" && newR.load == true) {
+      newR.buy();
     }
   },
 
@@ -325,7 +327,8 @@ Pixpls.Data = {
         { type: "showel", el: "#generators, .click"},
         { type: "log", message: "This *is* a clicky game.  How about some tasty, endorphin-producing clicking?" },
         { type: "purchase" }
-      ]
+      ],
+      load: true // This will show the logs, too... ARGH!
     },{
       label: "showpixelgen",
       type: "hidden",
@@ -335,7 +338,8 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".pixel" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     },{
       label: "showrenderergen",
       type: "hidden",
@@ -345,7 +349,8 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".renderer" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     },{
       label: "showextrudergen",
       type: "hidden",
@@ -355,7 +360,8 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".extruder" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     },{
       label: "showelectronicskitgen",
       type: "hidden",
@@ -365,7 +371,8 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".electronicskit" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     },{
       label: "showfactorygen",
       type: "hidden",
@@ -375,7 +382,8 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".factory" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     },{
       label: "showcementprintergen",
       type: "hidden",
@@ -385,7 +393,8 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".cementprinter" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     },{
       label: "showdesignlabgen",
       type: "hidden",
@@ -395,7 +404,8 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".designlab" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     },{
       label: "showaigen",
       type: "hidden",
@@ -405,7 +415,8 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".ai" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     },{
       label: "showmods",
       type: "hidden",
@@ -418,7 +429,8 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".mods" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     },{
       label: "showtabs",
       type: "hidden",
@@ -428,9 +440,11 @@ Pixpls.Data = {
       _buy: [
         { type: "showel", el: ".tabs" },
         { type: "purchase" }
-      ]
+      ],
+      load: true
     }
   ],
+
   functionList: {
     // Defaults
     // Affordable Helpers

@@ -14,46 +14,27 @@ var Pixpls = {
 
   logs: [],
   maxLogs: 1000,
-  maxdisplayLogs: 10,
+  maxDisplayLogs: 10,
   nextLogId: 0,
 
   init: function() {
-    //Pixpls.Generators.init();
-    // Generators init:
-    // var section = $("<section id=\"generators\" />"); // I don't think we need to add a class, because we'll set it as a this.
-    // var menu = $("<menu />");
-    // section.append(menu);
-    //
-    // this.section = section;
-    // this.menu = menu;
-    //
-    // $("section").replaceWith(this.section);
+    $("li, article, .mod").remove();
+
+    $("#generators").html("<menu></menu>");
     $("#generators").hide();
 
-    //Pixpls.Mods.init();
-    // Mods init:
-
-    var div = $(".mods"); // Should I just define this as div: $("<div class="mods" />"); ?
+    $(".mods").hide(); // Should I just define this as div: $("<div class="mods" />"); ?
     $(".unavailable").html("<h4>Unavailable Mods - Shouldn't ever display</h4>");
     $(".unavailable").hide();
     $(".available").html("<h4>Available</h4>");
     $(".purchased").html("<h4>Purchased</h4>");
-    div.hide();
 
-
-    // This needs to be modified a bit, because the load isn't displaying the Mods div.
-    // It's because the hiddenMod that displays them isn't there any more in the save data.
-    // if (localStorage["savedata"] == "true") {
-    //   Pixpls.load();
-    // } else {
-      Pixpls.Data.init();
-    // }
-
+    $("header").off();
     $("header").on("click", "#savebutton", Pixpls.save);
     $("header").on("click", "#loadbutton", Pixpls.load);
     $("header").on("click", "#resetbutton", Pixpls.reset);
 
-    // Stink.  This is not showing the first log.
+    // I think we want this in every load of the window.
     new Log("Welcome to Pixpls! (ver." + Pixpls.ver + ")");
   },
   update: function() {
@@ -85,7 +66,7 @@ var Pixpls = {
         break;
       }
 
-      footer.append("<p>" + Pixpls.logs[i].message + "</p>");
+      footer.append("<p class=\"log\">" + Pixpls.logs[i].message + "</p>");
       numLogs++;
     }
   },
@@ -107,34 +88,50 @@ var Pixpls = {
       new Log("New Version!  Luckily, your save file is going to attempt to load.");
     }
 
+    Pixpls.init();
+
     Pixpls.numTicks = localStorage["numTicks"];
+    Pixpls.resources = {};
 
     // This seems pretty easy... but does it fix some of the Object.setProperty's?
-    Pixpls.resources = JSON.parse(localStorage["resources"]);
+    var o = JSON.parse(localStorage["resources"]);
+
+    for (key in o) {
+      Pixpls.Data.newResource(o[key]);
+    }
 
     new Log("Game loaded!");
     return true;
   },
   reset: function() {
-    if (!window.confirm("This is an actual reset.  It's not fancy prestige stuff.  You probably don't want to do this.  Continue?")) {
-      new Log("Pixpls Apocalypse Averted!");
-      return;
+    if (localStorage["savedata"] == true) {
+      if (!window.confirm("This is an actual reset.  It's not fancy prestige stuff.  You probably don't want to do this.  Continue?")) {
+        new Log("Pixpls Apocalypse Averted!");
+        return;
+      } // else...
+      new Log("Gauss!  Was it worth it?");
+      localStorage["savedata"] = false;
+      // You know what?  Let's just burn it all.
+      localStorage.clear();
     }
-    new Log("Gauss!  Was it worth it?");
 
-    localStorage["savedata"] = false;
+    // This part happens because we confirmed the dialog on reset, or because there's no savegame.
+
     Pixpls.numTicks = 0;
-
-    $("#generators").find("li").remove();
-    $("#generators").find("article").remove();
-
     Pixpls.resources = {};
 
     Pixpls.init();
+    for (var i = 0; i < Pixpls.Data.resourceList.length; i++) {
+      Pixpls.Data.newResource(Pixpls.Data.resourceList[i]);
+    }
   }
 };
 $(document).ready(function() {
-  Pixpls.init();
+  if (localStorage["savedata"] == "true") {
+    Pixpls.load();
+  } else {
+    Pixpls.reset();
+  }
 
   window.setInterval(Pixpls.update, Pixpls.tickLength);
 });
@@ -238,6 +235,10 @@ function HiddenMod (params) {
 
   this.status = params.status || "hidden";
 
+  if (params.load == true || params.load == "true") {
+    this.load = true;
+  }
+
   Pixpls.resources[this.label] = this;
 //  Pixpls.Mods.list.push(this.label);
 }
@@ -296,37 +297,56 @@ Mod.prototype.display = function() {
 Mod.prototype.purchase = function() { // This doesn't handle hiddenmods, gonna cause problems.
   this.status = "purchased";
   $(".purchased").append(this.div);
+  this.buttonSpan.remove();
 }
 
 Mod.prototype.updateDescription = function() {
   $("." + this.label).find(".description").html(this.description);
 }
 Mod.prototype.render = function() {
-  var div = $("<div />");
-  div.addClass(this.label);
-  div.addClass("mod");
+  var div = $("<div class=\"" + this.label + " mod\" />");
 
-  div.html("<p class=\"name\">" + this.name + "</p>");
+  div.append("<p class=\"name\">" + this.name + "</p>");
   div.append("<p class=\"description\">" + this.description + "</p>");
 
-  var buttonSpan = $("<span />");
-  buttonSpan.addClass("buttonSpan");
-  div.append(buttonSpan);
+  var buttonSpan = $("<span class=\"buttonSpan\"/>");
 
-  var button = $("<button />");
-  button.html(this.message + "!");
-  var notButton = $("<s />");
-  notButton.html(this.message);
+  buttonSpan.append("<button>" + this.message + "!</button>");
+  buttonSpan.append("<s>" + this.message + "</s>");
+  // var button = $("<button>" + this.message + "!</button>");
+  // // button.html(this.message + "!");
+  // var notButton = $("<s>" + this.message + "</s>");
+  // // notButton.html(this.message);
 
-  buttonSpan.append(button);
-  buttonSpan.append(notButton);
+  // buttonSpan.append(button);
+  // buttonSpan.append(notButton);
 
-  if (this.buy) {
+  if (this.buy && this.status != "purchased") {
     var t = this;
+    div.append(buttonSpan);
     buttonSpan.on( "click", "button", function() { t.buy(); } );
   }
 
-  $(".unavailable").append(div);
+  switch(this.status) {
+    case "unavailable":
+      $(".unavailable").append(div);
+      break;
+    case "available":
+      $(".available").append(div);
+      break;
+    case "purchased":
+      $(".purchased").append(div);
+      break;
+    case "hidden":
+      console.log("Made a new mod, " + this.label + ", but it's status is hidden.  I don't think that's supposed to happen.");
+      break;
+    case "hiddenPurchased":
+      console.log("Made a new mod, " + this.label + ", but it's status is hiddenPurchased.  I don't think that's supposed to happen.");
+      break;
+    default:
+      console.log("Unhandled mod type in " + this.label + ".  This is the default case!  Yay for Switch tutorials!  Let's make this error message over long.  Just really long.  I Loooooooooooooooooooove Long Error Messages! ILLEM!");
+      break;
+  }
   this.update();
 };
 // These aren't seeming to work properly.  Fix 'em next!
@@ -498,6 +518,7 @@ Generator.prototype.update = function() {
 
 // Class Helper Functions
 
+// This isn't really a bool anymore... I should probably change the name.
 function boolFunction (o, r) {
   switch(o.type) {
     case "true":
@@ -567,7 +588,11 @@ function boolFunction (o, r) {
       Pixpls.resources[o.resource || r].updateDescription();
       break;
     case "log":
-      new Log(o.message);
+      // I don't like this conditional, it breaks too many walls, referencing a condition based on the non o argument.
+      // Further, I might run into bugs later where I accidentally make a message after the purchase.
+      if (Pixpls.resources[r].status != "hiddenPurchased") {
+        new Log(o.message);
+      }
       break;
     case "default":
       new Log("Bought " + m.name + "!");
