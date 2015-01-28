@@ -6,7 +6,7 @@ function toFixed(num, precision) { // Grabbed off of StackOverflow -> floor inst
 
 var Pixpls = {
 // Start Date?
-  ver: "pre-alpha",
+  ver: "a0.0.1",
   tickLength: 100,
   numTicks: 0,
   devMode: true,
@@ -48,9 +48,9 @@ var Pixpls = {
     }
 
     // This automatically auto-saves... I'm not sure we want that.  But we'll implement it for now.
-    // if (Pixpls.numTicks % 100 === 0) {
-    //   Pixpls.save();
-    // }
+    if (Pixpls.numTicks % 300 === 0) {
+      Pixpls.save();
+    }
   },
   updateLogs: function() { // Shouldn't happen every frame, just when we make a new log.
     if (Pixpls.logs.length > Pixpls.maxLogs) {
@@ -76,6 +76,7 @@ var Pixpls = {
     localStorage["numTicks"] = Pixpls.numTicks;
 
     localStorage["resources"] = JSON.stringify(Pixpls.resources);
+    new Log("Game Saved!");
   },
   load: function() {
     // reverse localStorage save info with logic for versioning.
