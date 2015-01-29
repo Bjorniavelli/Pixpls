@@ -54,7 +54,7 @@ var Pixpls = {
   },
   updateLogs: function() { // Shouldn't happen every frame, just when we make a new log.
     if (Pixpls.logs.length > Pixpls.maxLogs) {
-      Pixpls.logs = Pixpls.logs.slice(0, PixplsmaxLogs);
+      Pixpls.logs = Pixpls.logs.slice(0, Pixpls.maxLogs);
     }
 
     var footer = $("footer");
@@ -172,9 +172,9 @@ function Resource (params) {
   this.flavorText = params.flavorText;
   this.message = params.message || "Buy";
 
-  this._makeAvailable = params._makeAvailable || "returnFalse";
-  this._affordable = params._affordable || "returnTrue";
-  this._buy = params._buy || "defaultBuy";
+  this._makeAvailable = params._makeAvailable;// || [{ type: "false" }];
+  this._affordable = params._affordable;// || [{ type: "true" }]";
+  this._buy = params._buy;// || [{ type: "default" }];
 }
 Resource.prototype.makeAvailable = function() {
   if (typeof this._makeAvailable == "string") {
@@ -235,6 +235,27 @@ Resource.prototype.buy = function() { // Stopgap until we figure out what we wan
     }
   }
 }
+Resource.prototype.createButtonSpan = function () {
+  var buttonSpan = $("<span class=\"buttonSpan\"/>");
+
+  buttonSpan.append("<button>" + this.message + "!</button>");
+  buttonSpan.append("<s>" + this.message + "</s>");
+
+  if (this.buy) {
+    var t = this;
+    buttonSpan.on( "click", "button", function() { t.buy(); } );
+  }
+  return buttonSpan;
+}
+Object.defineProperty(Resource.prototype, "buttonSpan", {
+  get: function() { return $("." + this.label).find("span"); }
+});
+Object.defineProperty(Resource.prototype, "button", {
+  get: function() { return this.buttonSpan.find("button"); }
+});
+Object.defineProperty(Resource.prototype, "notButton", {
+  get: function() { return this.buttonSpan.find("s"); }
+});
 
 function HiddenMod (params) {
   Resource.call(this, params);
@@ -313,58 +334,37 @@ Mod.prototype.render = function() {
   div.append("<p class=\"name\">" + this.name + "</p>");
   div.append("<p class=\"description\">" + this.description + "</p>");
 
-  var buttonSpan = $("<span class=\"buttonSpan\"/>");
-
-  buttonSpan.append("<button>" + this.message + "!</button>");
-  buttonSpan.append("<s>" + this.message + "</s>");
-  // var button = $("<button>" + this.message + "!</button>");
-  // // button.html(this.message + "!");
-  // var notButton = $("<s>" + this.message + "</s>");
-  // // notButton.html(this.message);
-
-  // buttonSpan.append(button);
-  // buttonSpan.append(notButton);
-
-  if (this.buy && this.status != "purchased") {
-    var t = this;
-    div.append(buttonSpan);
-    buttonSpan.on( "click", "button", function() { t.buy(); } );
+  if (this.status != "purchased") {
+    div.append(this.createButtonSpan());
   }
 
-  switch(this.status) {
-    case "unavailable":
-      $(".unavailable").append(div);
-      break;
-    case "available":
-      $(".available").append(div);
-      break;
-    case "purchased":
-      $(".purchased").append(div);
-      break;
-    case "hidden":
-      console.log("Made a new mod, " + this.label + ", but it's status is hidden.  I don't think that's supposed to happen.");
-      break;
-    case "hiddenPurchased":
-      console.log("Made a new mod, " + this.label + ", but it's status is hiddenPurchased.  I don't think that's supposed to happen.");
-      break;
-    default:
-      console.log("Unhandled mod type in " + this.label + ".  This is the default case!  Yay for Switch tutorials!  Let's make this error message over long.  Just really long.  I Loooooooooooooooooooove Long Error Messages! ILLEM!");
-      break;
-  }
+// Can the following line replace the switch?
+ div.appendTo("." + this.status);
+  // switch(this.status) {
+  //   case "unavailable":
+  //     $(".unavailable").append(div);
+  //     break;
+  //   case "available":
+  //     $(".available").append(div);
+  //     break;
+  //   case "purchased":
+  //     $(".purchased").append(div);
+  //     break;
+  //   case "hidden":
+  //     console.log("Made a new mod, " + this.label + ", but it's status is hidden.  I don't think that's supposed to happen.");
+  //     break;
+  //   case "hiddenPurchased":
+  //     console.log("Made a new mod, " + this.label + ", but it's status is hiddenPurchased.  I don't think that's supposed to happen.");
+  //     break;
+  //   default:
+  //     console.log("Unhandled mod type in " + this.label + ".  This is the default case!  Yay for Switch tutorials!  Let's make this error message over long.  Just really long.  I Loooooooooooooooooooove Long Error Messages! ILLEM!");
+  //     break;
+  // }
   this.update();
 };
 // These aren't seeming to work properly.  Fix 'em next!
 Object.defineProperty(Mod.prototype, "div", {
   get: function() { return $("." + this.label); }
-});
-Object.defineProperty(Mod.prototype, "buttonSpan", {
-  get: function() { return this.div.find("span"); }
-});
-Object.defineProperty(Mod.prototype, "button", {
-  get: function() { return this.buttonSpan.find("button"); }
-});
-Object.defineProperty(Mod.prototype, "notButton", {
-  get: function() { return this.buttonSpan.find("s"); }
 });
 
 function Generator (params) {
@@ -387,12 +387,26 @@ function Generator (params) {
   this.buyAmount = params.buyAmount || 1;
   this.numLost = params.numLost || 0;
 
+  // String interpretations
+  if (!this._makeAvailable) {
+    this._makeAvailable = [
+      { type: "minproperty", resource: this.produceTarget.label, property: "num", val: 5 }
+    ]
+  }
+  if (!this._affordable) {
+    this._affordable = [
+      { type: "maxproperty", resource: this.label, property: "num", val: "maxNum" },
+      { type: "minproperty", resource: this.produceTarget.label, property: "num", resource2: this.label, val: "cost"}
+    ]
+  }
+
   this.createArticle();
   this.createLi();
 
   Pixpls.resources[params.label] = this;
   //Pixpls.Generators.list.push(this.label);
 };
+Generator.prototype = Object.create(Resource.prototype);
 
 Object.defineProperty(Generator.prototype, "article", {
   get: function() {
@@ -401,7 +415,7 @@ Object.defineProperty(Generator.prototype, "article", {
 });
 Object.defineProperty(Generator.prototype, "li", {
   get: function() {
-    return $("#generators>menu>." + this.key);
+    return $("#generators>menu>." + this.label);
   }
 });
 Generator.prototype.createArticle = function() {
@@ -439,10 +453,11 @@ Generator.prototype.createLi = function() {
   var li = $("<li />");
 
   li.addClass(this.label);
-  li.html("<a href=\"\">" + this.name + "</a>: <var>" + toFixed(this.num, 2) + "</var>");
-  li.append("<button>" + this.message + "</button>");
+  li.html("<a href=\"\">" + this.name + "</a>: <var>" + toFixed(this.num, 2) + "</var> &nbsp");
+//  li.append("<button>" + this.message + "</button>");
   li.on("click", "a", function(e) { e.preventDefault(); t.select(); });
-  li.on("click", "button", function() { t.buy(); });
+  //li.on("click", "button", function() { t.buy(); });
+  li.append(this.createButtonSpan());
 
   $("#generators>menu").append(li);
   li.hide();
@@ -451,7 +466,7 @@ Generator.prototype.createLi = function() {
 };
 Generator.prototype.updateLi = function() {
   $("menu ." + this.label + " var").html(toFixed(this.num, 2)); // This 'key' is going to cause problems later...
-}
+};
 
 Object.defineProperty(Generator.prototype, "cost", {
   get: function() {
@@ -494,6 +509,22 @@ Generator.prototype.buy = function() {
 Generator.prototype.update = function() {
   this.updateArticle();
   this.updateLi();
+
+  if (this._makeAvailable) {
+    if (this.makeAvailable()) {
+      this.li.show();
+    }
+  }
+
+  if (this._affordable) {
+    if ( this.affordable()) {
+      this.notButton.css({display: "none"});
+      this.button.css({display: "block"});
+    } else {
+      this.notButton.css({display: "inline"});
+      this.button.css({display: "none"});
+    }
+  }
 
   if (this.produce) {
     var amount = this.produce * (Pixpls.tickLength / 1000);
@@ -541,21 +572,23 @@ function boolFunction (o, r) {
       }
       break;
     case "setproperty": // We could probably combine a bunch of these to this.
-      Pixpls.resources[o.resource][o.property] = o.val;
+      Pixpls.resources[o.resource || r][o.property] = (Pixpls.resources[o.resource || r][o.val] || o.val);
       break;
     case "addproperty":
-      Pixpls.resources[o.resource][o.property] += o.val;
+      Pixpls.resources[o.resource || r][o.property] += (Pixpls.resources[o.resource || r][o.val] || o.val);
       break;
     case "mulproperty":
-      Pixpls.resources[o.resource][o.property] *= o.val;
+      Pixpls.resources[o.resource || r][o.property] *= (Pixpls.resources[o.resource || r][o.val] || o.val);
       break;
-    case "minproperty":
-      if (Pixpls.resources[o.resource][o.property] < o.val) {
+    case "minproperty": // resources[ value in the string or the passed arg][ the property is required] < resources[same resource][accepts a property name or a value]
+//      if (Pixpls.resources[o.resource || r][o.property] < (Pixpls.resources[o.resource || r][o.val] || o.val)) {
+      if (Pixpls.resources[o.resource || r][o.property] < (Pixpls.resources[o.resource2 || o.resource || r][o.val] || o.val)) {
+        // this fixes a specific bug with generators display... it's kind of terrible?
         return false;
       }
       break;
     case "maxproperty":
-      if (Pixpls.resources[o.resource][o.property] > o.val) {
+      if (Pixpls.resources[o.resource || r][o.property] > (Pixpls.resources[o.resource || r][o.val] || o.val)) {
         return false;
       }
       break;

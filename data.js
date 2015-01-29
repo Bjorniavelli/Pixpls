@@ -30,7 +30,18 @@ Pixpls.Data = {
       message: "Click!",
       enabled: true,
       flavorText: "Strangely, they give off an appetizing aroma: Ozone and Umamclicki.",
-      baseCost: 0
+      baseCost: 0,
+      maxNum: 10,
+      _makeAvailable: [{ type: "true" }],
+      _affordable: [{ type: "maxproperty", resource: this.label, property: "num", val: "maxNum" }]
+      // _affordable: [
+      //   { type: "maxproperty", resource: "click", property: "num", val: "maxNum" },
+      //   { type: "minproperty", resource: "click", property: "num", val: "cost"}
+      // // Let's go ahead and see if we can continue using the buy methods we'd already defined for Generators.
+      // // ],
+      // // _buy: [
+      // //   { type: "addproperty", resource: "click", property: "num", val: "buyAmount"}
+      // ]
     },{
       label: "pixel",
       type: "generator",
@@ -39,6 +50,10 @@ Pixpls.Data = {
       _costTarget: "click",
       baseProduce: -1,
       flavorText: "Little dots that shine?  Fantastic!"
+      // _makeAvailable: [
+      //   { type: "minproperty", resource: "click", property: "num", val: 5 }
+      // ],
+      // _affordable: []
     },{
       label: "renderer",
       type: "generator",
@@ -324,99 +339,100 @@ Pixpls.Data = {
       description: "This should be hidden, but it will enable the generator menu after a short time.",
       _makeAvailable: [{ type: "time", num: 10 }],
       _buy: [
-        { type: "showel", el: "#generators, .click"},
+        { type: "showel", el: "#generators" },
+//        { type: "showel", el: "#generators, .click"},
         { type: "log", message: "This *is* a clicky game.  How about some tasty, endorphin-producing clicking?" },
         { type: "purchase" }
       ],
       load: true // This will show the logs, too... ARGH!
-    },{
-      label: "showpixelgen",
-      type: "hidden",
-      name: "Show Pixels Generator",
-      description: "Display an entry in the generators menu for Pixels.",
-      _makeAvailable: [{ type: "minproperty", resource: "click", property: "num", val: 5 }],
-      _buy: [
-        { type: "showel", el: ".pixel" },
-        { type: "purchase" }
-      ],
-      load: true
-    },{
-      label: "showrenderergen",
-      type: "hidden",
-      name: "Show Renderers Generator",
-      description: "Display an entry in the generators menu for Renderers.",
-      _makeAvailable: [{ type: "minproperty", resource: "pixel", property: "num", val: 5 }],
-      _buy: [
-        { type: "showel", el: ".renderer" },
-        { type: "purchase" }
-      ],
-      load: true
-    },{
-      label: "showextrudergen",
-      type: "hidden",
-      name: "Show Extruders Generator",
-      description: "Display an entry in the generators menu for Extruders.",
-      _makeAvailable: [{ type: "minproperty", resource: "renderer", property: "num", val: 5 }],
-      _buy: [
-        { type: "showel", el: ".extruder" },
-        { type: "purchase" }
-      ],
-      load: true
-    },{
-      label: "showelectronicskitgen",
-      type: "hidden",
-      name: "Show Electronics Kit Generator",
-      description: "Display an entry in the generators menu for Electronics Kits.",
-      _makeAvailable: [{ type: "minproperty", resource: "extruder", property: "num", val: 5 }],
-      _buy: [
-        { type: "showel", el: ".electronicskit" },
-        { type: "purchase" }
-      ],
-      load: true
-    },{
-      label: "showfactorygen",
-      type: "hidden",
-      name: "Show Factory Generator",
-      description: "Display an entry in the generators menu for Factories.",
-      _makeAvailable: [{ type: "minproperty", resource: "electronicskit", property: "num", val: 5 }],
-      _buy: [
-        { type: "showel", el: ".factory" },
-        { type: "purchase" }
-      ],
-      load: true
-    },{
-      label: "showcementprintergen",
-      type: "hidden",
-      name: "Show Cement Printer Generator",
-      description: "Display an entry in the generators menu for Cement Printers.",
-      _makeAvailable: [{ type: "minproperty", resource: "factory", property: "num", val: 5 }],
-      _buy: [
-        { type: "showel", el: ".cementprinter" },
-        { type: "purchase" }
-      ],
-      load: true
-    },{
-      label: "showdesignlabgen",
-      type: "hidden",
-      name: "Show Design Lab Generator",
-      description: "Display an entry in the generators menu for Design Labs.",
-      _makeAvailable: [{ type: "minproperty", resource: "cementprinter", property: "num", val: 5 }],
-      _buy: [
-        { type: "showel", el: ".designlab" },
-        { type: "purchase" }
-      ],
-      load: true
-    },{
-      label: "showaigen",
-      type: "hidden",
-      name: "Show AI Generator",
-      description: "Display an entry in the generators menu for AIs.",
-      _makeAvailable: [{ type: "minproperty", resource: "designlab", property: "num", val: 5 }],
-      _buy: [
-        { type: "showel", el: ".ai" },
-        { type: "purchase" }
-      ],
-      load: true
+    // },{
+    //   label: "showpixelgen",
+    //   type: "hidden",
+    //   name: "Show Pixels Generator",
+    //   description: "Display an entry in the generators menu for Pixels.",
+    //   _makeAvailable: [{ type: "minproperty", resource: "click", property: "num", val: 5 }],
+    //   _buy: [
+    //     { type: "showel", el: ".pixel" },
+    //     { type: "purchase" }
+    //   ],
+    //   load: true
+    // },{
+    //   label: "showrenderergen",
+    //   type: "hidden",
+    //   name: "Show Renderers Generator",
+    //   description: "Display an entry in the generators menu for Renderers.",
+    //   _makeAvailable: [{ type: "minproperty", resource: "pixel", property: "num", val: 5 }],
+    //   _buy: [
+    //     { type: "showel", el: ".renderer" },
+    //     { type: "purchase" }
+    //   ],
+    //   load: true
+    // },{
+    //   label: "showextrudergen",
+    //   type: "hidden",
+    //   name: "Show Extruders Generator",
+    //   description: "Display an entry in the generators menu for Extruders.",
+    //   _makeAvailable: [{ type: "minproperty", resource: "renderer", property: "num", val: 5 }],
+    //   _buy: [
+    //     { type: "showel", el: ".extruder" },
+    //     { type: "purchase" }
+    //   ],
+    //   load: true
+    // },{
+    //   label: "showelectronicskitgen",
+    //   type: "hidden",
+    //   name: "Show Electronics Kit Generator",
+    //   description: "Display an entry in the generators menu for Electronics Kits.",
+    //   _makeAvailable: [{ type: "minproperty", resource: "extruder", property: "num", val: 5 }],
+    //   _buy: [
+    //     { type: "showel", el: ".electronicskit" },
+    //     { type: "purchase" }
+    //   ],
+    //   load: true
+    // },{
+    //   label: "showfactorygen",
+    //   type: "hidden",
+    //   name: "Show Factory Generator",
+    //   description: "Display an entry in the generators menu for Factories.",
+    //   _makeAvailable: [{ type: "minproperty", resource: "electronicskit", property: "num", val: 5 }],
+    //   _buy: [
+    //     { type: "showel", el: ".factory" },
+    //     { type: "purchase" }
+    //   ],
+    //   load: true
+    // },{
+    //   label: "showcementprintergen",
+    //   type: "hidden",
+    //   name: "Show Cement Printer Generator",
+    //   description: "Display an entry in the generators menu for Cement Printers.",
+    //   _makeAvailable: [{ type: "minproperty", resource: "factory", property: "num", val: 5 }],
+    //   _buy: [
+    //     { type: "showel", el: ".cementprinter" },
+    //     { type: "purchase" }
+    //   ],
+    //   load: true
+    // },{
+    //   label: "showdesignlabgen",
+    //   type: "hidden",
+    //   name: "Show Design Lab Generator",
+    //   description: "Display an entry in the generators menu for Design Labs.",
+    //   _makeAvailable: [{ type: "minproperty", resource: "cementprinter", property: "num", val: 5 }],
+    //   _buy: [
+    //     { type: "showel", el: ".designlab" },
+    //     { type: "purchase" }
+    //   ],
+    //   load: true
+    // },{
+    //   label: "showaigen",
+    //   type: "hidden",
+    //   name: "Show AI Generator",
+    //   description: "Display an entry in the generators menu for AIs.",
+    //   _makeAvailable: [{ type: "minproperty", resource: "designlab", property: "num", val: 5 }],
+    //   _buy: [
+    //     { type: "showel", el: ".ai" },
+    //     { type: "purchase" }
+    //   ],
+    //   load: true
     },{
       label: "showmods",
       type: "hidden",

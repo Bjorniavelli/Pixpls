@@ -33,6 +33,10 @@ article {
   vertical-align: top;
 }
 
+span {
+  display: inline-block;
+}
+
 .mods {
   clear: both;
   border: 1px solid black;
