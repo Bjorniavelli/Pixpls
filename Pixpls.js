@@ -418,6 +418,11 @@ Object.defineProperty(Generator.prototype, "li", {
     return $("#generators>menu>." + this.label);
   }
 });
+
+// START HERE!
+// Need to create a cost display.  Let's skip tooltips, and just go for
+// static displays.
+// Turns out, I could set the title attribute of the buy button to the cost...
 Generator.prototype.createArticle = function() {
   var article = $("<article class=\"" + this.label + "\" />");
   var name = this.name ? this.name : "There's nothing here!";
@@ -429,6 +434,8 @@ Generator.prototype.createArticle = function() {
   article.append ("<p class=\"generatorCost\"></p>");
   article.append ("<p class=\"produces\"></p>");
   article.append ("<p class=\"buyAmount\"></p>");
+//  article.append (this.htmlCostFunction());
+  // article.append(this.createButtonSpan()); // Just not sure we want to repeat ourselves.
 
   $("#generators").append(article);
   this.article.hide();
@@ -466,6 +473,30 @@ Generator.prototype.createLi = function() {
 };
 Generator.prototype.updateLi = function() {
   $("menu ." + this.label + " var").html(toFixed(this.num, 2)); // This 'key' is going to cause problems later...
+  this.buttonSpan.attr("title", this.affordableTitle());
+//  this.buttonSpan.attr("title", "Test?");
+//  this.buttonSpan.append(this.affordableTitle());
+};
+Generator.prototype.affordableTitle = function() {
+  var s = "";
+
+  if (!this._affordable || !Array.isArray(this._affordable)) {
+    return s;
+  }
+
+  for (var i = 0; i < this._affordable.length; i++) {
+    if (s != "") {
+      s += "\n";
+    }
+//    console.log(this.label + " -> " + this.affordable[i].type + " -> " + titleFunction(this._affordable[i], this.label));
+    s += titleFunction(this._affordable[i], this.label);
+  }
+
+  if (s.slice(-1) == "\n") {
+    s = s.substr(0, length - 1);
+  }
+
+  return s;
 };
 
 Object.defineProperty(Generator.prototype, "cost", {
@@ -636,4 +667,54 @@ function boolFunction (o, r) {
   }
 
   return true;
+}
+
+function titleFunction (o, r) {
+  switch (o.type) {
+    case "statusexists":
+      for (key in Pixpls.resources) {
+        if (Pixpls.resources[key].status === o.status) {
+          return "";
+        }
+      }
+      return "Nothing is " + o.status + ".";
+    case "status":
+      if (Pixpls.resources[o.mod || r].status != ( o.status || "purchased" )) {
+        return Pixpls.resource[o.mod || r].name + " is not " + (o.status || "purchased") + ".";
+      }
+      return "";
+    case "minproperty": // resources[ value in the string or the passed arg][ the property is required] < resources[same resource][accepts a property name or a value]
+      // This is not formatted well, but it's OK for stopgap.
+      var s = (Pixpls.resources[o.resource2 || o.resource || r][o.val] || o.val) + " " + Pixpls.resources[o.resource || r].name;
+      if (o.property != "num") {
+        s += " " + o.property;
+      }
+      s += ".";
+      return s;
+    case "maxproperty":
+      if (Pixpls.resources[o.resource || r][o.property] > (Pixpls.resources[o.resource || r][o.val] || o.val)) {
+        return "Expand max capacity!";
+      }
+      return "";
+    case "time":
+      if (Pixpls.numTicks < o.num) {
+        return "Wait " + ((o.num - Pixpls.numTicks) * (Pixpls.tickLength / 1000)) + " more seconds.";
+      }
+      return "";
+    case "true": // We don't need all of these, default will handle it, but let's explicitly state that we aren't handling it.
+    case "false":
+    case "dev":
+    case "setproperty":
+    case "addproperty":
+    case "mulproperty":
+    case "stringmap":
+    case "showel":
+    case "hideel":
+    case "purchase":
+    case "description":
+    case "log":
+    case "default":
+    default:
+      return "";
+  }
 }
