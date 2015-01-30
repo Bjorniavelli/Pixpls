@@ -246,7 +246,31 @@ Resource.prototype.createButtonSpan = function () {
     buttonSpan.on( "click", "button", function() { t.buy(); } );
   }
   return buttonSpan;
-}
+};
+Resource.prototype.affordableTitle = function() {
+  var s = "";
+
+  if (!this._affordable || !Array.isArray(this._affordable)) {
+    return s;
+  }
+
+  for (var i = 0; i < this._affordable.length; i++) {
+    if (s != "") {
+      s += "\n";
+    }
+//    console.log(this.label + " -> " + this.affordable[i].type + " -> " + titleFunction(this._affordable[i], this.label));
+    s += titleFunction(this._affordable[i], this.label);
+  }
+
+  if (s.slice(-1) == "\n") {
+    s = s.substr(0, length - 1);
+  }
+  s = "Requirements:\n" + s;
+
+  return s;
+};
+
+
 Object.defineProperty(Resource.prototype, "buttonSpan", {
   get: function() { return $("." + this.label).find("span"); }
 });
@@ -285,6 +309,7 @@ HiddenMod.prototype.update = function() {
       }
       break;
     case "available":
+      this.buttonSpan.attr("title", this.affordableTitle());
       if ( this.affordable()) {
         this.notButton.css({display: "none"});
         this.button.css({display: "block"});
@@ -419,10 +444,6 @@ Object.defineProperty(Generator.prototype, "li", {
   }
 });
 
-// START HERE!
-// Need to create a cost display.  Let's skip tooltips, and just go for
-// static displays.
-// Turns out, I could set the title attribute of the buy button to the cost...
 Generator.prototype.createArticle = function() {
   var article = $("<article class=\"" + this.label + "\" />");
   var name = this.name ? this.name : "There's nothing here!";
@@ -436,6 +457,8 @@ Generator.prototype.createArticle = function() {
   article.append ("<p class=\"buyAmount\"></p>");
 //  article.append (this.htmlCostFunction());
   // article.append(this.createButtonSpan()); // Just not sure we want to repeat ourselves.
+// This is complicatd... and I'm just not sure it adds any extra information to the player.
+//  article.append ("<div class=\"requirements\">" + htmlFunction() + "</div>");
 
   $("#generators").append(article);
   this.article.hide();
@@ -453,6 +476,7 @@ Generator.prototype.updateArticle = function() {
   if (this.buyAmount != 1) {
     this.article.find(".buyAmount").html("Buying <var>" + this.buyAmount + "</var> per purchase.");
   }
+//  updateHtmlFunction(this.article.find(".requirements"), r);
 }
 
 Generator.prototype.createLi = function() {
@@ -476,27 +500,6 @@ Generator.prototype.updateLi = function() {
   this.buttonSpan.attr("title", this.affordableTitle());
 //  this.buttonSpan.attr("title", "Test?");
 //  this.buttonSpan.append(this.affordableTitle());
-};
-Generator.prototype.affordableTitle = function() {
-  var s = "";
-
-  if (!this._affordable || !Array.isArray(this._affordable)) {
-    return s;
-  }
-
-  for (var i = 0; i < this._affordable.length; i++) {
-    if (s != "") {
-      s += "\n";
-    }
-//    console.log(this.label + " -> " + this.affordable[i].type + " -> " + titleFunction(this._affordable[i], this.label));
-    s += titleFunction(this._affordable[i], this.label);
-  }
-
-  if (s.slice(-1) == "\n") {
-    s = s.substr(0, length - 1);
-  }
-
-  return s;
 };
 
 Object.defineProperty(Generator.prototype, "cost", {
@@ -717,4 +720,8 @@ function titleFunction (o, r) {
     default:
       return "";
   }
+}
+
+function htmlFunction(o, r) {
+
 }
