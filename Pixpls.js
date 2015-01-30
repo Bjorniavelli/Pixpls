@@ -491,7 +491,9 @@ Generator.prototype.createLi = function() {
   li.append(this.createButtonSpan());
 
   $("#generators>menu").append(li);
-  li.hide();
+  if (this.num <= 0) { // This might not be the best place for this.
+    li.hide();
+  }
   // Fix this later... >_>
   // Pixpls.Generators.menu.append(li);
 };
