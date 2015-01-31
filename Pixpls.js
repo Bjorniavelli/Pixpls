@@ -343,12 +343,16 @@ Mod.prototype = Object.create(HiddenMod.prototype);
 Mod.prototype.display = function() {
   this.status = "available";
   $(".available").append(this.div);
-}
+};
+Mod.prototype.undisplay = function() {
+  this.status = "unavailable";
+  $(".unavailable").append(this.div);
+};
 Mod.prototype.purchase = function() {
   this.status = "purchased";
   $(".purchased").append(this.div);
   this.buttonSpan.remove();
-}
+};
 
 Mod.prototype.updateDescription = function() {
   $("." + this.label).find(".description").html(this.description);
@@ -405,6 +409,7 @@ function Generator (params) {
 
   // Optional
   this.num = params.num || 0;
+  this.maxNum = params.maxNum || Infinity;
   this.message = params.message || "Buy!";
   this.costPower = params.costPower;
 
@@ -484,7 +489,7 @@ Generator.prototype.createLi = function() {
   var li = $("<li />");
 
   li.addClass(this.label);
-  li.html("<a href=\"\">" + this.name + "</a>: <var>" + toFixed(this.num, 2) + "</var> &nbsp");
+  li.html("<a href=\"\">" + this.name + "</a>: <var>" + toFixed(this.num, 2) + " / " + toFixed(this.maxNum, 0) + "</var> &nbsp");
 //  li.append("<button>" + this.message + "</button>");
   li.on("click", "a", function(e) { e.preventDefault(); t.select(); });
   //li.on("click", "button", function() { t.buy(); });
@@ -498,7 +503,7 @@ Generator.prototype.createLi = function() {
   // Pixpls.Generators.menu.append(li);
 };
 Generator.prototype.updateLi = function() {
-  $("menu ." + this.label + " var").html(toFixed(this.num, 2)); // This 'key' is going to cause problems later...
+  $("menu ." + this.label + " var").html(toFixed(this.num, 2) + " / " + toFixed(this.maxNum, 0)); // This 'key' is going to cause problems later...
   this.buttonSpan.attr("title", this.affordableTitle());
 //  this.buttonSpan.attr("title", "Test?");
 //  this.buttonSpan.append(this.affordableTitle());
@@ -624,7 +629,7 @@ function boolFunction (o, r) {
       }
       break;
     case "maxproperty":
-      if (Pixpls.resources[o.resource || r][o.property] > (Pixpls.resources[o.resource || r][o.val] || o.val)) {
+      if (Pixpls.resources[o.resource || r][o.property] >= (Pixpls.resources[o.resource2 || o.resource || r][o.val] || o.val)) {
         return false;
       }
       break;
@@ -651,6 +656,9 @@ function boolFunction (o, r) {
       break;
     case "purchase":
       Pixpls.resources[o.mod || r].purchase();
+      break;
+    case "undisplay":
+      Pixpls.resources[o.mod || r].undisplay();
       break;
     case "description":
       Pixpls.resources[o.resource || r].description = o.text;
@@ -716,6 +724,7 @@ function titleFunction (o, r) {
     case "showel":
     case "hideel":
     case "purchase":
+    case "undisplay":
     case "description":
     case "log":
     case "default":
@@ -725,5 +734,5 @@ function titleFunction (o, r) {
 }
 
 function htmlFunction(o, r) {
-
+  // Not doing anything ATM.
 }

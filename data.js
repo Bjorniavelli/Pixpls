@@ -33,15 +33,7 @@ Pixpls.Data = {
       baseCost: 0,
       maxNum: 10,
       _makeAvailable: [{ type: "true" }],
-      _affordable: [{ type: "maxproperty", resource: this.label, property: "num", val: "maxNum" }]
-      // _affordable: [
-      //   { type: "maxproperty", resource: "click", property: "num", val: "maxNum" },
-      //   { type: "minproperty", resource: "click", property: "num", val: "cost"}
-      // // Let's go ahead and see if we can continue using the buy methods we'd already defined for Generators.
-      // // ],
-      // // _buy: [
-      // //   { type: "addproperty", resource: "click", property: "num", val: "buyAmount"}
-      // ]
+      _affordable: [{ type: "maxproperty", resource: "click", property: "num", val: "maxNum" }]
     },{
       label: "pixel",
       type: "generator",
@@ -49,11 +41,8 @@ Pixpls.Data = {
       _produceTarget: "click",
       _costTarget: "click",
       baseProduce: -1,
+      maxNum: 1,
       flavorText: "Little dots that shine?  Fantastic!"
-      // _makeAvailable: [
-      //   { type: "minproperty", resource: "click", property: "num", val: 5 }
-      // ],
-      // _affordable: []
     },{
       label: "renderer",
       type: "generator",
@@ -62,6 +51,7 @@ Pixpls.Data = {
       _produceTarget: "pixel",
       _costTarget: "pixel",
       baseProduce: 0.0005,
+      maxNum: 1,
       flavorText: "All we have to do is make more pixels?  That doesn't seem so hard."
     },{
       label: "extruder",
@@ -70,6 +60,7 @@ Pixpls.Data = {
       _produceTarget: "renderer",
       _costTarget: "renderer",
       baseProduce: 0.0005,
+      maxNum: 1,
       flavorText: "Imagine a snail leaving behind a sticky residue.  It's gross.  Actually, it's not like that.  But it's still gross."
     },{
       label: "electronicskit",
@@ -78,6 +69,7 @@ Pixpls.Data = {
       _produceTarget: "extruder",
       _costTarget: "extruder",
       baseProduce: 0.0005,
+      maxNum: 1,
       flavorText: "A virtual toolbox for making more virtual stuff.  Makes sense."
     },{
       label: "factory",
@@ -86,6 +78,7 @@ Pixpls.Data = {
       _produceTarget: "electronicskit",
       _costTarget: "electronicskit",
       baseProduce: 0.0005,
+      maxNum: 1,
       flavorText: "Making things by hand is so 18th centicycle.  They work better when we make them en masse.  That's French for en masse."
     },{
       label: "cementprinter",
@@ -94,6 +87,7 @@ Pixpls.Data = {
       _produceTarget: "factory",
       _costTarget: "factory",
       baseProduce: 0.0005,
+      maxNum: 1,
       flavorText: "Virtual Factories are made out of virtual cement.  That's the secret ingredient.  The other secret ingredient is virtual secrets."
     },{
       label: "designlab",
@@ -102,6 +96,7 @@ Pixpls.Data = {
       _produceTarget: "cementprinter",
       _costTarget: "cementprinter",
       baseProduce: 0.0005,
+      maxNum: 1,
       flavorText: "It's not so much useful as a place to put all those hipxlsters."
     },{
       label: "ai",
@@ -110,6 +105,7 @@ Pixpls.Data = {
       _produceTarget: "designlab",
       _costTarget: "designlab",
       baseProduce: 0.0005,
+      maxNum: 1,
       flavorText: "Everybody run away from the singularity!"
     },
 
@@ -141,6 +137,140 @@ Pixpls.Data = {
       _makeAvailable: [{ type: "dev" }],
       _affordable: [{ type: "true" }],
       _buy: [{ type: "addproperty", resource: "pixel", property: "num", val: 1000 }]
+    },{
+      label: "maxclicks",
+      type: "mod",
+      name: "Increase Max Clicks",
+      description: "Yer buffers're full, bae!  Ye cannot hold n'more!  Sacrifice some ta further th' bale.",
+      _makeAvailable: [
+        { type: "minproperty", resource: "click", property: "num", val: "maxNum" }
+      ],
+      _affordable: [{ type: "true" }],
+      _buy: [
+        { type: "mulproperty", resource: "click", property: "maxNum", val: 10 },
+        { type: "mulproperty", resource: "click", property: "num", val: 0.1 },
+        { type: "undisplay" }
+      ]
+    },{
+      label: "maxpixels",
+      type: "mod",
+      name: "Increase Screen Density",
+      description: "Real Estate, the only investment that can never be created or destroyed.  Luckily, technojumble will let us just increase the number of pixels who can comfortably live there.",
+      _makeAvailable: [
+        { type: "minproperty", resource: "pixel", property: "num", val: "maxNum" }
+      ],
+      _affordable: [{ type: "true" }],
+      _buy: [
+        { type: "mulproperty", resource: "pixel", property: "maxNum", val: 10 },
+        { type: "mulproperty", resource: "pixel", property: "num", val: 0.1 },
+        { type: "undisplay" }
+      ]
+    },{
+      label: "maxren",
+      type: "mod",
+      name: "Alchemistry",
+      description: "No sense in changing your renderers from goo to goold, but surely we can make them lighter and less unwieldy.",
+      _makeAvailable: [
+        { type: "minproperty", resource: "renderer", property: "num", val: "maxNum" }
+      ],
+      _affordable: [{ type: "true" }],
+      _buy: [
+        { type: "mulproperty", resource: "renderer", property: "maxNum", val: 10 },
+        { type: "mulproperty", resource: "renderer", property: "num", val: 0.1 }, // This might be a pretty steep cost...
+        { type: "undisplay" }
+      ]
+    },{
+      label: "maxextruders",
+      type: "mod",
+      name: "Slurm Additives",
+      description: "Shut up and take my money!",
+      _makeAvailable: [
+        { type: "minproperty", resource: "extruder", property: "num", val: "maxNum" }
+      ],
+      _affordable: [{ type: "true" }],
+      _buy: [
+        { type: "mulproperty", resource: "extruder", property: "maxNum", val: 10 },
+        { type: "mulproperty", resource: "extruder", property: "num", val: 0.1 },
+        { type: "undisplay" }
+      ]
+    },{
+      label: "maxelectronicskits",
+      type: "mod",
+      name: "Positronic Electrons",
+      description: "Let's change the laws of physics some, and allow us to carry more electronics kits.",
+      _makeAvailable: [
+        { type: "minproperty", resource: "electronicskit", property: "num", val: "maxNum" }
+      ],
+      _affordable: [{ type: "true" }],
+      _buy: [
+        { type: "mulproperty", resource: "electronicskit", property: "maxNum", val: 10 },
+        { type: "mulproperty", resource: "electronicskit", property: "num", val: 0.1 },
+        { type: "undisplay" }
+      ]
+    },{
+      label: "maxfactorys",
+      type: "mod",
+      name: "Zoning",
+      description: "Let's set aside some virtual space for factories instead of those useless Pixpls.  Maybe we'll let the Pixpls live in the factorys.", // Yah, I know, but we don't have plural strings, yet.
+      _makeAvailable: [
+        { type: "minproperty", resource: "factory", property: "num", val: "maxNum" }
+      ],
+      _affordable: [{ type: "true" }],
+      _buy: [
+        { type: "mulproperty", resource: "factory", property: "maxNum", val: 10 },
+        { type: "mulproperty", resource: "factory", property: "num", val: 0.1 },
+        { type: "undisplay" }
+      ]
+    },{
+      label: "maxcementprinters",
+      type: "mod",
+      name: "Stronger Cement",
+      description: "We need more cement printers!  Don't worry, the new slurry is more efficient.",
+      _makeAvailable: [
+        { type: "minproperty", resource: "cementprinter", property: "num", val: "maxNum" }
+      ],
+      _affordable: [{ type: "true" }],
+      _buy: [
+        { type: "mulproperty", resource: "cementprinter", property: "maxNum", val: 10 },
+        { type: "mulproperty", resource: "cementprinter", property: "num", val: 0.1 },
+        { type: "undisplay" }
+      ]
+    },{
+      label: "maxdesignlabs",
+      type: "mod",
+      name: "Manufacture uglier BCGs",
+      description: "Those hipxlsters are feeling too popular.  Let's uggify them.",
+      _makeAvailable: [
+        { type: "minproperty", resource: "designlab", property: "num", val: "maxNum" }
+      ],
+      _affordable: [{ type: "true" }],
+      _buy: [
+        { type: "mulproperty", resource: "designlab", property: "maxNum", val: 10 },
+        { type: "mulproperty", resource: "designlab", property: "num", val: 0.1 },
+        { type: "undisplay" }
+      ]
+    },{
+      label: "maxais",
+      type: "mod",
+      name: "Become More Human",
+      description: "We aren't actually building more AIs, we're just making a more schizophrenic AI.  Let's shatter that psyche a bit more.",
+      _makeAvailable: [
+        { type: "minproperty", resource: "ai", property: "num", val: "maxNum" }
+      ],
+      _affordable: [{ type: "true" }],
+      _buy: [
+        { type: "mulproperty", resource: "ai", property: "maxNum", val: 10 },
+        { type: "mulproperty", resource: "ai", property: "num", val: 0.1 },
+        { type: "undisplay" }
+      ]
+
+      // In here, we need to add more mods for increasing max num of the generators.
+      // generator buy amounts
+      // generator produce amounts
+      // generator cost increase amounts
+      // generator... can we drop down which thing it costs?  Like make renderers cost clicks instead of pixels?, extruders to pixels and then clicks, etc?
+
+
     },{
       label: "redgluttony",
       type: "mod",
@@ -345,94 +475,6 @@ Pixpls.Data = {
         { type: "purchase" }
       ],
       load: true // This will show the logs, too... ARGH!
-    // },{
-    //   label: "showpixelgen",
-    //   type: "hidden",
-    //   name: "Show Pixels Generator",
-    //   description: "Display an entry in the generators menu for Pixels.",
-    //   _makeAvailable: [{ type: "minproperty", resource: "click", property: "num", val: 5 }],
-    //   _buy: [
-    //     { type: "showel", el: ".pixel" },
-    //     { type: "purchase" }
-    //   ],
-    //   load: true
-    // },{
-    //   label: "showrenderergen",
-    //   type: "hidden",
-    //   name: "Show Renderers Generator",
-    //   description: "Display an entry in the generators menu for Renderers.",
-    //   _makeAvailable: [{ type: "minproperty", resource: "pixel", property: "num", val: 5 }],
-    //   _buy: [
-    //     { type: "showel", el: ".renderer" },
-    //     { type: "purchase" }
-    //   ],
-    //   load: true
-    // },{
-    //   label: "showextrudergen",
-    //   type: "hidden",
-    //   name: "Show Extruders Generator",
-    //   description: "Display an entry in the generators menu for Extruders.",
-    //   _makeAvailable: [{ type: "minproperty", resource: "renderer", property: "num", val: 5 }],
-    //   _buy: [
-    //     { type: "showel", el: ".extruder" },
-    //     { type: "purchase" }
-    //   ],
-    //   load: true
-    // },{
-    //   label: "showelectronicskitgen",
-    //   type: "hidden",
-    //   name: "Show Electronics Kit Generator",
-    //   description: "Display an entry in the generators menu for Electronics Kits.",
-    //   _makeAvailable: [{ type: "minproperty", resource: "extruder", property: "num", val: 5 }],
-    //   _buy: [
-    //     { type: "showel", el: ".electronicskit" },
-    //     { type: "purchase" }
-    //   ],
-    //   load: true
-    // },{
-    //   label: "showfactorygen",
-    //   type: "hidden",
-    //   name: "Show Factory Generator",
-    //   description: "Display an entry in the generators menu for Factories.",
-    //   _makeAvailable: [{ type: "minproperty", resource: "electronicskit", property: "num", val: 5 }],
-    //   _buy: [
-    //     { type: "showel", el: ".factory" },
-    //     { type: "purchase" }
-    //   ],
-    //   load: true
-    // },{
-    //   label: "showcementprintergen",
-    //   type: "hidden",
-    //   name: "Show Cement Printer Generator",
-    //   description: "Display an entry in the generators menu for Cement Printers.",
-    //   _makeAvailable: [{ type: "minproperty", resource: "factory", property: "num", val: 5 }],
-    //   _buy: [
-    //     { type: "showel", el: ".cementprinter" },
-    //     { type: "purchase" }
-    //   ],
-    //   load: true
-    // },{
-    //   label: "showdesignlabgen",
-    //   type: "hidden",
-    //   name: "Show Design Lab Generator",
-    //   description: "Display an entry in the generators menu for Design Labs.",
-    //   _makeAvailable: [{ type: "minproperty", resource: "cementprinter", property: "num", val: 5 }],
-    //   _buy: [
-    //     { type: "showel", el: ".designlab" },
-    //     { type: "purchase" }
-    //   ],
-    //   load: true
-    // },{
-    //   label: "showaigen",
-    //   type: "hidden",
-    //   name: "Show AI Generator",
-    //   description: "Display an entry in the generators menu for AIs.",
-    //   _makeAvailable: [{ type: "minproperty", resource: "designlab", property: "num", val: 5 }],
-    //   _buy: [
-    //     { type: "showel", el: ".ai" },
-    //     { type: "purchase" }
-    //   ],
-    //   load: true
     },{
       label: "showmods",
       type: "hidden",
