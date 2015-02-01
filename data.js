@@ -21,6 +21,39 @@ Pixpls.Data = {
     }
   },
 
+  tabList: [
+    {
+      label: "generators",
+      name: "Generators",
+      type: "generator",
+    },
+    {
+      label: "heroes",
+      name: "Hero",
+      type: "hero"
+    },
+    {
+      label: "crafts",
+      name: "Crafting",
+      type: "craft"
+    },
+    {
+      label: "buildings",
+      name: "Camp",
+      type: "building"
+    },
+    {
+      label: "helps",
+      name: "Help",
+      type: "help",
+    },
+    {
+      label: "settings",
+      name: "Settings",
+      type: "setting"
+    }
+  ],
+
   resourceList: [
     // Generators
     {

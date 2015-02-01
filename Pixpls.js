@@ -34,6 +34,10 @@ var Pixpls = {
     $("header").on("click", "#loadbutton", Pixpls.load);
     $("header").on("click", "#resetbutton", Pixpls.reset);
 
+    for (var i = 0; i < Pixpls.Data.tabList.length; i++) {
+      new Tab(Pixpls.Data.tabList[i]);
+    }
+
     // I think we want this in every load of the window.
     new Log("Welcome to Pixpls! (ver." + Pixpls.ver + ")");
   },
@@ -146,17 +150,27 @@ $(document).ready(function() {
 
 // Class Definitions
 
-// function Tab (params) {
-//   this.label = params.label;
-//   this.name = params.name;
-//   this.type = params.type;
-//
-//   this.render();
-// }
-//
-// Tab.prototype.render = function() {
-//
-// }
+function Tab (params) {
+  this.label = params.label;
+  this.name = params.name;
+  this.type = params.type;
+
+  this.render();
+}
+
+Tab.prototype.render = function() {
+  var t = this;
+
+  var li = $("<li class=\"" + this.label + "\">" + this.name + "</li>");
+  li.on("click", function() { t.select(); });
+//  li.hide();
+
+  $("nav>ul").append(li);
+}
+Tab.prototype.select = function() {
+  $("section").hide();
+  $("#" + this.label).show();
+}
 
 function Log (params) {
   if (typeof params == "string") {

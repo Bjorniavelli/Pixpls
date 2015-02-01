@@ -2,6 +2,12 @@ body {
   font-size: 14px;
 }
 
+nav li {
+  display: inline;
+  padding: 5px;
+  margin: 2px;
+}
+
 header {
   display: block;
   height: 50px;
