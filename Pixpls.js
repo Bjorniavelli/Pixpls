@@ -20,8 +20,9 @@ var Pixpls = {
   init: function() {
     $("li, article, .mod").remove();
 
-    $("#generators").html("<menu></menu>");
-    $("#generators").hide();
+    for (var i = 0; i < Pixpls.Data.tabList.length; i++) {
+      new Tab(Pixpls.Data.tabList[i]);
+    }
 
     $(".mods").hide(); // Should I just define this as div: $("<div class="mods" />"); ?
     $(".unavailable").html("<h4>Unavailable Mods - Shouldn't ever display</h4>");
@@ -33,10 +34,6 @@ var Pixpls = {
     $("header").on("click", "#savebutton", Pixpls.save);
     $("header").on("click", "#loadbutton", Pixpls.load);
     $("header").on("click", "#resetbutton", Pixpls.reset);
-
-    for (var i = 0; i < Pixpls.Data.tabList.length; i++) {
-      new Tab(Pixpls.Data.tabList[i]);
-    }
 
     // I think we want this in every load of the window.
     new Log("Welcome to Pixpls! (ver." + Pixpls.ver + ")");
@@ -166,6 +163,10 @@ Tab.prototype.render = function() {
 //  li.hide();
 
   $("nav>ul").append(li);
+
+  var section = $("<section id=\"" + this.label + "\"><menu></menu></section>");
+  $("#sections").append(section);
+  section.hide();
 }
 Tab.prototype.select = function() {
   $("section").hide();
