@@ -146,6 +146,18 @@ $(document).ready(function() {
 
 // Class Definitions
 
+// function Tab (params) {
+//   this.label = params.label;
+//   this.name = params.name;
+//   this.type = params.type;
+//
+//   this.render();
+// }
+//
+// Tab.prototype.render = function() {
+//
+// }
+
 function Log (params) {
   if (typeof params == "string") {
     this.message = params;
@@ -367,28 +379,7 @@ Mod.prototype.render = function() {
     div.append(this.createButtonSpan());
   }
 
-// Can the following line replace the switch?
- div.appendTo("." + this.status);
-  // switch(this.status) {
-  //   case "unavailable":
-  //     $(".unavailable").append(div);
-  //     break;
-  //   case "available":
-  //     $(".available").append(div);
-  //     break;
-  //   case "purchased":
-  //     $(".purchased").append(div);
-  //     break;
-  //   case "hidden":
-  //     console.log("Made a new mod, " + this.label + ", but it's status is hidden.  I don't think that's supposed to happen.");
-  //     break;
-  //   case "hiddenPurchased":
-  //     console.log("Made a new mod, " + this.label + ", but it's status is hiddenPurchased.  I don't think that's supposed to happen.");
-  //     break;
-  //   default:
-  //     console.log("Unhandled mod type in " + this.label + ".  This is the default case!  Yay for Switch tutorials!  Let's make this error message over long.  Just really long.  I Loooooooooooooooooooove Long Error Messages! ILLEM!");
-  //     break;
-  // }
+  div.appendTo("." + this.status);
   this.update();
 };
 // These aren't seeming to work properly.  Fix 'em next!

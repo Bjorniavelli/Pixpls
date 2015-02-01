@@ -459,6 +459,22 @@ Pixpls.Data = {
         { type: "log", message: "Scorched Earth!  But maybe you should see how the new renderers work!" },
         { type: "purchase" }
       ]
+    },{ // I need 4 +/- mods for increasing the produce rate of each generator, but I don't really know how I want to handle the story aspect of that...
+      label: "extrate",
+      type: "mod",
+      name: "More Electronic",
+      description: "Who developed these things?  It's just somewhere at the bottom of the uncanny valley.  Perhaps if we made them less realistic, they'd be more effective?",
+      _makeAvailable: [{ type: "minproperty", resource: "extruder", property: "num", val: 1 }],
+      _affordable: [
+        { type: "minproperty", resource: "extruder", property: "num", vale: 1 },
+      ],
+      _buy: [
+        { type: "addproperty", resource: "extruder", property: "num", val: -1 },
+        { type: "setproperty", resource: "extruder", property: "baseProduce", val: 0.1 },
+        { type: "description", text: "These things are creepier.  They're now just slime-producers with giant rows of flashing lights and a noxious odor that leaves a taste in the back of your throat." },
+        { tyoe: "log", message: "Extruders are way more productive now." },
+        { type: "purchase" }
+      ]
     },
 
     //Hidden Mods
