@@ -106,7 +106,7 @@ var Pixpls = {
     return true;
   },
   reset: function() {
-    if (localStorage["savedata"] == true) {
+    if (localStorage["savedata"] == "true") {
       if (!window.confirm("This is an actual reset.  It's not fancy prestige stuff.  You probably don't want to do this.  Continue?")) {
         new Log("Pixpls Apocalypse Averted!");
         return;
@@ -126,6 +126,9 @@ var Pixpls = {
     for (var i = 0; i < Pixpls.Data.resourceList.length; i++) {
       Pixpls.Data.newResource(Pixpls.Data.resourceList[i]);
     }
+
+    // This shouldn't need to be here, but if I hide it in the new Generator, they aren't staying hidden.
+    $("section li").hide();
   }
 };
 
