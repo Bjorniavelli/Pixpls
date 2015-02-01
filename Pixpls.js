@@ -405,16 +405,16 @@ Object.defineProperty(Mod.prototype, "div", {
   get: function() { return $("." + this.label); }
 });
 
-function Generator (params) {
+// Things in the menu are called 'InventoryItem'... I don't like that, though.
+
+function InventoryItem (params) {
   Resource.call(this, params);
 
-  this._produceTarget = params._produceTarget;
   this._costTarget = params._costTarget;
   this.costRatio = params.costRatio;
 
   // Logic
   this.baseCost = params.baseCost || 1;
-  this.baseProduce = params.baseProduce || 0;
 
   // Optional
   this.num = params.num || 0;
@@ -426,74 +426,30 @@ function Generator (params) {
   this.buyAmount = params.buyAmount || 1;
   this.numLost = params.numLost || 0;
 
-  // String interpretations
-  if (!this._makeAvailable) {
-    this._makeAvailable = [
-      { type: "minproperty", resource: this.produceTarget.label, property: "num", val: 5 }
-    ]
-  }
-  if (!this._affordable) {
-    this._affordable = [
-      { type: "maxproperty", resource: this.label, property: "num", val: "maxNum" },
-      { type: "minproperty", resource: this.produceTarget.label, property: "num", resource2: this.label, val: "cost"}
-    ]
-  }
+  // String Interpretations
+  // Nothing generic?
 
-  this.createArticle();
+  // Display
   this.createLi();
 
   Pixpls.resources[params.label] = this;
-  //Pixpls.Generators.list.push(this.label);
-};
-Generator.prototype = Object.create(Resource.prototype);
-
-Object.defineProperty(Generator.prototype, "article", {
-  get: function() {
-    return $("#generators>article." + this.label);
-  }
-});
-Object.defineProperty(Generator.prototype, "li", {
-  get: function() {
-    return $("#generators>menu>." + this.label);
-  }
-});
-
-Generator.prototype.createArticle = function() {
-  var article = $("<article class=\"" + this.label + "\" />");
-  var name = this.name ? this.name : "There's nothing here!";
-  var flavorText = this.flavorText ? this.flavorText : this.name;
-  article.append("<h2>" + name + "</h2>");
-  article.append("<em>" + flavorText + "</em>");
-
-  article.append ("<p class=\"numLost\"></p>");
-  article.append ("<p class=\"generatorCost\"></p>");
-  article.append ("<p class=\"produces\"></p>");
-  article.append ("<p class=\"buyAmount\"></p>");
-//  article.append (this.htmlCostFunction());
-  // article.append(this.createButtonSpan()); // Just not sure we want to repeat ourselves.
-// This is complicatd... and I'm just not sure it adds any extra information to the player.
-//  article.append ("<div class=\"requirements\">" + htmlFunction() + "</div>");
-
-  $("#generators").append(article);
-  this.article.hide();
-};
-Generator.prototype.updateArticle = function() {
-  if (this.costTarget) {
-    this.article.find(".generatorCost").html("Costs <var>" + this.cost + "</var> " + this.costTarget.name + " per " + this.name + ".");
-  }
-  if (this.numLost > 0) {
-    this.article.find(".numLost").html("<var>" + this.numLost.toFixed(2) + "</var> lost due to poor planning.");
-  }
-  if (this.produceTarget) {
-    this.article.find(".produces").html("Produces <var>" + this.baseProduce + "</var> " + this.produceTarget.name + " per " + this.name + " per second. (" + this.produce + " total)");
-  }
-  if (this.buyAmount != 1) {
-    this.article.find(".buyAmount").html("Buying <var>" + this.buyAmount + "</var> per purchase.");
-  }
-//  updateHtmlFunction(this.article.find(".requirements"), r);
 }
+InventoryItem.prototype = Object.create(Resource.prototype);
 
-Generator.prototype.createLi = function() {
+Object.defineProperty(InventoryItem.prototype, "article", {
+  get: function() {
+    return $("section>article." + this.label);
+  }
+});
+Object.defineProperty(InventoryItem.prototype, "li", {
+  get: function() {
+    return $("section>menu>." + this.label);
+  }
+});
+
+InventoryItem.prototype.createLi = function() {
+  console.log(this.label);
+
   var t = this;
   var li = $("<li />");
 
@@ -511,14 +467,14 @@ Generator.prototype.createLi = function() {
   // Fix this later... >_>
   // Pixpls.Generators.menu.append(li);
 };
-Generator.prototype.updateLi = function() {
+InventoryItem.prototype.updateLi = function() {
   $("menu ." + this.label + " var").html(toFixed(this.num, 2) + " / " + toFixed(this.maxNum, 0)); // This 'key' is going to cause problems later...
   this.buttonSpan.attr("title", this.affordableTitle());
 //  this.buttonSpan.attr("title", "Test?");
 //  this.buttonSpan.append(this.affordableTitle());
 };
 
-Object.defineProperty(Generator.prototype, "cost", {
+Object.defineProperty(InventoryItem.prototype, "cost", {
   get: function() {
     switch(typeof this.costRatio) {
       case "number":
@@ -530,21 +486,16 @@ Object.defineProperty(Generator.prototype, "cost", {
     }
   }
 });
-Object.defineProperty(Generator.prototype, "costTarget", {
+Object.defineProperty(InventoryItem.prototype, "costTarget", {
   get: function() { return Pixpls.resources[this._costTarget]; }
 });
-Object.defineProperty(Generator.prototype, "produceTarget", {
-  get: function() { return Pixpls.resources[this._produceTarget]; }
-});
-Object.defineProperty(Generator.prototype, "produce", {
-  get: function() { return Math.floor(this.num) * this.baseProduce; }
-});
 
-Generator.prototype.select = function() {
-  $("#generators>article").hide();
+InventoryItem.prototype.select = function() {
+  //$("#generators>article").hide(); // This maybe ought to find a way to find the current section?
+  $("article").hide();
   this.article.show();
 };
-Generator.prototype.buy = function() {
+InventoryItem.prototype.buy = function() {
   if (!this.costTarget) {
     this.num += this.buyAmount;
     return;
@@ -556,8 +507,8 @@ Generator.prototype.buy = function() {
     return;
   }
 };
-Generator.prototype.update = function() {
-  this.updateArticle();
+InventoryItem.prototype.update = function() {
+  if (this.updateArticle) { this.updateArticle(); }
   this.updateLi();
 
   if (this._makeAvailable) {
@@ -596,6 +547,85 @@ Generator.prototype.update = function() {
     }
   }
 };
+
+function Generator (params) {
+  InventoryItem.call(this, params);
+
+  this._produceTarget = params._produceTarget;
+
+  // Logic
+  this.baseProduce = params.baseProduce || 0;
+
+  // Optional
+
+  // Fixed
+
+  // String interpretations
+  if (!this._makeAvailable) {
+    this._makeAvailable = [
+      { type: "minproperty", resource: this.produceTarget.label, property: "num", val: 5 }
+    ]
+  }
+  if (!this._affordable) {
+    this._affordable = [
+      { type: "maxproperty", resource: this.label, property: "num", val: "maxNum" },
+      { type: "minproperty", resource: this.produceTarget.label, property: "num", resource2: this.label, val: "cost"}
+    ]
+  }
+
+  // Display
+  this.createArticle();
+};
+Generator.prototype = Object.create(InventoryItem.prototype);
+
+Generator.prototype.createArticle = function() {
+  var article = $("<article class=\"" + this.label + "\" />");
+  var name = this.name ? this.name : "There's nothing here!";
+  var flavorText = this.flavorText ? this.flavorText : this.name;
+  article.append("<h2>" + name + "</h2>");
+  article.append("<em>" + flavorText + "</em>");
+
+  article.append ("<p class=\"numLost\"></p>");
+  article.append ("<p class=\"generatorCost\"></p>");
+  article.append ("<p class=\"produces\"></p>");
+  article.append ("<p class=\"buyAmount\"></p>");
+//  article.append (this.htmlCostFunction());
+  // article.append(this.createButtonSpan()); // Just not sure we want to repeat ourselves.
+// This is complicatd... and I'm just not sure it adds any extra information to the player.
+//  article.append ("<div class=\"requirements\">" + htmlFunction() + "</div>");
+
+  $("#generators").append(article);
+  this.article.hide();
+};
+Generator.prototype.updateArticle = function() {
+  if (this.costTarget) {
+    this.article.find(".generatorCost").html("Costs <var>" + this.cost + "</var> " + this.costTarget.name + " per " + this.name + ".");
+  }
+  if (this.numLost > 0) {
+    this.article.find(".numLost").html("<var>" + this.numLost.toFixed(2) + "</var> lost due to poor planning.");
+  }
+  if (this.produceTarget) {
+    this.article.find(".produces").html("Produces <var>" + this.baseProduce + "</var> " + this.produceTarget.name + " per " + this.name + " per second. (" + this.produce + " total)");
+  }
+  if (this.buyAmount != 1) {
+    this.article.find(".buyAmount").html("Buying <var>" + this.buyAmount + "</var> per purchase.");
+  }
+//  updateHtmlFunction(this.article.find(".requirements"), r);
+}
+
+Object.defineProperty(Generator.prototype, "produceTarget", {
+  get: function() { return Pixpls.resources[this._produceTarget]; }
+});
+Object.defineProperty(Generator.prototype, "produce", {
+  get: function() { return Math.floor(this.num) * this.baseProduce; }
+});
+
+function Craft (params) {
+  InventoryItem.call(this, params);
+
+  console.log("??");
+}
+Craft.prototype = Object.create(InventoryItem.prototype); // This needs to have a common superclass as Generator
 
 // Class Helper Functions
 

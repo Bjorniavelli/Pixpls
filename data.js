@@ -1,9 +1,12 @@
 Pixpls.Data = {
   newResource: function(r) {
     var newR;
-    switch (r.type) {
+    switch (r.type) { // I wonder if I could make an object and reference these as just newR = new ClassContainer[r.type](); ?
       case "generator":
         newR = new Generator(r);
+        break;
+      case "craft":
+        newR = new Craft(r);
         break;
       case "hidden":
         newR = new HiddenMod(r);
@@ -140,6 +143,19 @@ Pixpls.Data = {
       baseProduce: 0.0005,
       maxNum: 1,
       flavorText: "Everybody run away from the singularity!"
+    },
+
+    // Crafts
+
+    {
+      label: "pixeldust",
+      type: "craft",
+      name: "Pixel Dust",
+      //_produceTarget: "pixeldust", // Creates dust, but doesn't do it automatically
+      _costTarget: "click",
+      baseProduce: 0,
+      maxNum: 10,
+      flavorText: "It's not made out of pixels.  That'd be crazy!"
     },
 
     // Mods
