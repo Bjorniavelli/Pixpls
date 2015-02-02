@@ -20,6 +20,7 @@ var Pixpls = {
   init: function() {
     $("li, article, .mod").remove();
 
+    $("#sections").empty();
     for (var i = 0; i < Pixpls.Data.tabList.length; i++) {
       new Tab(Pixpls.Data.tabList[i]);
     }
@@ -436,6 +437,27 @@ function InventoryItem (params) {
 }
 InventoryItem.prototype = Object.create(Resource.prototype);
 
+Object.defineProperty(InventoryItem.prototype, "section", {
+  get: function() {
+    switch (this.type) { // I could just do "#" + this.type + "s"... but that assumes I stick with that form.
+      case "generator":
+        return $("#generators");
+      case "hero":
+        return $("#heros");
+      case "craft":
+        return $("#crafts");
+      case "building":
+        return $("#buildings");
+      case "help":
+        return $("#helps");
+      case "setting":
+        return $("#settings");
+      default:
+        console.log("Unhandled type in " + this.label + "\'s attempt to get .section.");
+        return false;
+    }
+  }
+});
 Object.defineProperty(InventoryItem.prototype, "article", {
   get: function() {
     return $("section>article." + this.label);
@@ -448,8 +470,6 @@ Object.defineProperty(InventoryItem.prototype, "li", {
 });
 
 InventoryItem.prototype.createLi = function() {
-  console.log(this.label);
-
   var t = this;
   var li = $("<li />");
 
@@ -460,7 +480,7 @@ InventoryItem.prototype.createLi = function() {
   //li.on("click", "button", function() { t.buy(); });
   li.append(this.createButtonSpan());
 
-  $("#generators>menu").append(li);
+  this.section.find("menu").append(li);
   if (this.num <= 0) { // This might not be the best place for this.
     li.hide();
   }
@@ -517,14 +537,12 @@ InventoryItem.prototype.update = function() {
     }
   }
 
-  if (this._affordable) {
-    if ( this.affordable()) {
-      this.notButton.css({display: "none"});
-      this.button.css({display: "block"});
-    } else {
-      this.notButton.css({display: "inline"});
-      this.button.css({display: "none"});
-    }
+  if (this._affordable && this.affordable()) {
+    this.notButton.css({display: "none"});
+    this.button.css({display: "block"});
+  } else {
+    this.notButton.css({display: "inline"});
+    this.button.css({display: "none"});
   }
 
   if (this.produce) {
@@ -620,12 +638,39 @@ Object.defineProperty(Generator.prototype, "produce", {
   get: function() { return Math.floor(this.num) * this.baseProduce; }
 });
 
+// Hero skills
+function Hero (params) {
+  InventoryItem.call(this, params);
+}
+Hero.prototype = Object.create(InventoryItem.prototype);
+
+// Crafts
+
 function Craft (params) {
   InventoryItem.call(this, params);
-
-  console.log("??");
 }
-Craft.prototype = Object.create(InventoryItem.prototype); // This needs to have a common superclass as Generator
+Craft.prototype = Object.create(InventoryItem.prototype);
+
+// Buildings
+
+function Building (params) {
+  InventoryItem.call(this, params);
+}
+Building.prototype = Object.create(InventoryItem.prototype);
+
+// Helps
+
+function Help (params) {
+  InventoryItem.call(this, params);
+}
+Help.prototype = Object.create(InventoryItem.prototype);
+
+// Settings
+
+function Setting (params) {
+  InventoryItem.call(this, params);
+}
+Setting.prototype = Object.create(InventoryItem.prototype);
 
 // Class Helper Functions
 

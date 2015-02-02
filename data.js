@@ -5,8 +5,20 @@ Pixpls.Data = {
       case "generator":
         newR = new Generator(r);
         break;
+      case "hero":
+        newR = new Hero(r);
+        break;
       case "craft":
         newR = new Craft(r);
+        break;
+      case "building":
+        newR = new Building(r);
+        break;
+      case "help":
+        newR = new Help(r);
+        break;
+      case "setting":
+        newR = new Setting(r);
         break;
       case "hidden":
         newR = new HiddenMod(r);
@@ -31,7 +43,7 @@ Pixpls.Data = {
       type: "generator",
     },
     {
-      label: "heroes",
+      label: "heros",
       name: "Hero",
       type: "hero"
     },
@@ -145,6 +157,54 @@ Pixpls.Data = {
       flavorText: "Everybody run away from the singularity!"
     },
 
+    // Hero Skills
+
+    {
+      label: "strength",
+      type: "hero",
+      name: "Strength",
+      // ??  I think this will need to have purchasing more like mods
+      // costTarget: ...
+      maxNum: 1,
+      flavorText: "A Hero is mighty, and strong!  Like OG, must carry big beating stick."
+    },{
+      label: "dexterity",
+      type: "hero",
+      name: "Dexterity",
+      maxNum: 1,
+      flavorText: "A Hero flows like the wind.  When you have to dodge bullets, you won't need to."
+    },{
+      label: "constitution",
+      type: "hero",
+      name: "Constitution",
+      maxNum: 1,
+      flavortext: "A Hero takes punches to the face (errr, pixel edge) like an ox with a steel plate in its head."
+    },{
+      label: "intelligence",
+      type: "hero",
+      name: "Intelligence",
+      maxNum: 1,
+      flavorText: "A Hero talk good."
+    },{
+      label: "wisdom",
+      type: "hero",
+      name: "Wisdom",
+      maxNum: 1,
+      flavorText: "A Hero sees to the heart of the situtation.  Don't touch it!"
+    },{
+      label: "charisma",
+      type: "hero",
+      name: "Charisma",
+      maxNum: 1,
+      flavorText: "A Hero gets aaaaallllll the ladies.  And the men.  And anything else."
+    },{
+      label: "smashing",
+      type: "hero",
+      name: "Smashing",
+      maxNum: 1,
+      flavorText: "A Hero can be a Hero even if he's smashing things into smithereenies."
+    },
+
     // Crafts
 
     {
@@ -156,6 +216,36 @@ Pixpls.Data = {
       baseProduce: 0,
       maxNum: 10,
       flavorText: "It's not made out of pixels.  That'd be crazy!"
+    },
+
+    // Buildings
+
+    {
+      label: "campfire",
+      type: "building",
+      name: "Campfire",
+      maxNum: 1,
+      flavorText: "What are they burning?  It's just sort of flickering.  But everyone seems to like it.  They're really bad at campfire songs."
+    },
+
+    // Helps
+
+    {
+      label: "nextstep",
+      type: "help",
+      name: "Oldpls Musings",
+      maxNum: 0,
+      flavorText: "This old Pixpl has been hovering around mumbling to himself."
+    },
+
+    // Settings
+
+    {
+      label: "devmodetoggle",
+      type: "setting",
+      name: "Toggle Dev Mode",
+      maxNum: 0,
+      flavorText: "You really shouldn't have these powers."
     },
 
     // Mods
